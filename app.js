@@ -3,33 +3,73 @@ const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTMUQiKrsd5pS1
 fetch(sheetURL)
   .then(response => response.text())
   .then(data => {
+
     const rows = data.split("\n");
+    let matches = [];
+
+    rows.slice(1).forEach(row => {
+
+      const columns = row.split(",");
+
+      if (columns.length > 7) {
+        matches.push({
+          date: columns[0],
+          time: columns[1],
+          league: columns[2],
+          home: columns[5],
+          away: columns[6],
+          venue: columns[7]
+        });
+      }
+
+    });
+
+    let grouped = {};
+
+    matches.forEach(match => {
+
+      if (!grouped[match.date]) {
+        grouped[match.date] = {};
+      }
+
+      if (!grouped[match.date][match.league]) {
+        grouped[match.date][match.league] = [];
+      }
+
+      grouped[match.date][match.league].push(match);
+
+    });
+
 
     let html = "";
 
-    rows.slice(1).forEach(row => {
-      const columns = row.split(",");
+    Object.keys(grouped).forEach(date => {
 
-      if (columns.length > 5) {
-        const date = columns[0];
-        const time = columns[1];
-        const competition = columns[2];
-        const home = columns[5];
-        const away = columns[6];
-        const venue = columns[7];
+      html += `<div class="date">${date}</div>`;
 
-        html += `
+      Object.keys(grouped[date]).forEach(league => {
+
+        html += `<div class="league">${league}</div>`;
+
+        grouped[date][league].forEach(match => {
+
+          html += `
           <div class="match">
-            <div class="league">${competition}</div>
-            <div class="time">${time}</div>
-            <div>${home} vs ${away}</div>
-            <div class="details">${venue}</div>
+            <div class="time">${match.time}</div>
+            <div class="teams">${match.home} vs ${match.away}</div>
+            <div class="details">${match.venue}</div>
           </div>
-        `;
-      }
+          `;
+
+        });
+
+      });
+
     });
 
+
     document.getElementById("matches").innerHTML = html;
+
   })
   .catch(error => {
     document.getElementById("matches").innerHTML =
