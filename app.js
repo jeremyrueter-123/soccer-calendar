@@ -1,6 +1,21 @@
 const sheetURL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTMUQiKrsd5pS1Tq7V1Qghgr6E0pCVhQvF7JiHiOgnJ_C_uuxCNljnCMBXWwzHK7WKBbo_x4aopyuJ1/pub?gid=0&single=true&output=csv";
 
+
+// Converts dates like 07/26/2026 into Sunday, July 26
+function formatDate(dateString) {
+
+    const date = new Date(dateString);
+
+    return date.toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric"
+    });
+
+}
+
+
 loadMatches();
 
 function loadMatches() {
@@ -83,7 +98,7 @@ function renderMatches(matches) {
 
     Object.keys(grouped).forEach(date => {
 
-        html += `<div class="date">${date}</div>`;
+        html += `<div class="date">${formatDate(date)}</div>`;
 
         Object.keys(grouped[date]).forEach(league => {
 
