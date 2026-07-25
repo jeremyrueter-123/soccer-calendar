@@ -1,78 +1,110 @@
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTMUQiKrsd5pS1Tq7V1Qghgr6E0pCVhQvF7JiHiOgnJ_C_uuxCNljnCMBXWwzHK7WKBbo_x4aopyuJ1/pub?gid=0&single=true&output=csv";
+const sheetURL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTMUQiKrsd5pS1Tq7V1Qghgr6E0pCVhQvF7JiHiOgnJ_C_uuxCNljnCMBXWwzHK7WKBbo_x4aopyuJ1/pub?gid=0&single=true&output=csv";
 
-fetch(sheetURL)
-  .then(response => response.text())
-  .then(data => {
+loadMatches();
+
+function loadMatches() {
+
+    fetch(sheetURL)
+        .then(response => response.text())
+        .then(data => {
+
+            const matches = parseCSV(data);
+            const html = renderMatches(matches);
+
+            document.getElementById("matches").innerHTML = html;
+
+        })
+        .catch(error => {
+
+            document.getElementById("matches").innerHTML =
+                "Unable to load matches.";
+
+            console.error(error);
+
+        });
+
+}
+
+function parseCSV(data) {
 
     const rows = data.split("\n");
-    let matches = [];
+
+    const matches = [];
 
     rows.slice(1).forEach(row => {
 
-      const columns = row.split(",");
+        const columns = row.split(",");
 
-      if (columns.length > 7) {
-        matches.push({
-          date: columns[0],
-          time: columns[1],
-          league: columns[2],
-          home: columns[5],
-          away: columns[6],
-          venue: columns[7]
-        });
-      }
+        if (columns.length > 7) {
+
+            matches.push({
+
+                date: columns[0].trim(),
+                time: columns[1].trim(),
+                league: columns[2].trim(),
+                home: columns[5].trim(),
+                away: columns[6].trim(),
+                venue: columns[7].trim()
+
+            });
+
+        }
 
     });
 
-    let grouped = {};
+    return matches;
+
+}
+
+function renderMatches(matches) {
+
+    const grouped = {};
 
     matches.forEach(match => {
 
-      if (!grouped[match.date]) {
-        grouped[match.date] = {};
-      }
+        if (!grouped[match.date]) {
 
-      if (!grouped[match.date][match.league]) {
-        grouped[match.date][match.league] = [];
-      }
+            grouped[match.date] = {};
 
-      grouped[match.date][match.league].push(match);
+        }
+
+        if (!grouped[match.date][match.league]) {
+
+            grouped[match.date][match.league] = [];
+
+        }
+
+        grouped[match.date][match.league].push(match);
 
     });
-
 
     let html = "";
 
     Object.keys(grouped).forEach(date => {
 
-      html += `<div class="date">${date}</div>`;
+        html += `<div class="date">${date}</div>`;
 
-      Object.keys(grouped[date]).forEach(league => {
+        Object.keys(grouped[date]).forEach(league => {
 
-        html += `<div class="league">${league}</div>`;
+            html += `<div class="league">${league}</div>`;
 
-        grouped[date][league].forEach(match => {
+            grouped[date][league].forEach(match => {
 
-          html += `
-          <div class="match">
-            <div class="time">${match.time}</div>
-            <div class="teams">${match.home} vs ${match.away}</div>
-            <div class="details">${match.venue}</div>
-          </div>
-          `;
+                html += `
+                    <div class="match">
+                        <div class="time">${match.time}</div>
+                        <div class="teams">${match.home} vs ${match.away}</div>
+                        <div class="details">${match.venue}</div>
+                    </div>
+                `;
+
+            });
 
         });
 
-      });
-
     });
 
+    return html;
 
-    document.getElementById("matches").innerHTML = html;
-
-  })
-  .catch(error => {
-    document.getElementById("matches").innerHTML =
-      "Unable to load matches.";
-    console.error(error);
-  });
+}
