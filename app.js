@@ -52,16 +52,23 @@ function parseCSV(data) {
 
         const columns = row.split(",");
 
-        if (columns.length > 7) {
+        if (columns.length > 12) {
 
             matches.push({
 
                 date: columns[0].trim(),
                 time: columns[1].trim(),
-                league: columns[2].trim(),
-                home: columns[5].trim(),
-                away: columns[6].trim(),
-                venue: columns[7].trim()
+                competition: columns[2].trim(),
+                stage: columns[3].trim(),
+                gender: columns[4].trim(),
+                level: columns[5].trim(),
+                home: columns[6].trim(),
+                away: columns[7].trim(),
+                venue: columns[8].trim(),
+                broadcast: columns[9].trim(),
+                notes: columns[10].trim(),
+                status: columns[11].trim(),
+                include: columns[12].trim()
 
             });
 
