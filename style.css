@@ -32,8 +32,42 @@ h2 {
 }
 
 .match {
-    padding: 12px 0;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    background-color: #ffffff;
+}
+
+.time {
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.teams {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.details {
+    color: #666;
+    font-size: 14px;
+}
+
+.date {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.league {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
 }
 
 .time {
