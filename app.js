@@ -116,13 +116,13 @@ function renderMatches(matches) {
 
         }
 
-        if (!grouped[match.date][match.league]) {
+        if (!grouped[match.date][match.competition]) {
 
-            grouped[match.date][match.league] = [];
+            grouped[match.date][match.competition] = [];
 
         }
 
-        grouped[match.date][match.league].push(match);
+        grouped[match.date][match.competition].push(match);
 
     });
 
@@ -132,17 +132,26 @@ function renderMatches(matches) {
 
         html += `<div class="date">${formatDate(date)}</div>`;
 
-        Object.keys(grouped[date]).forEach(league => {
+        Object.keys(grouped[date]).forEach(competition => {
 
-            html += `<div class="league">${league}</div>`;
+            html += `<div class="league">${competition}</div>`;
 
-            grouped[date][league].forEach(match => {
+            grouped[date][competition].forEach(match => {
 
                 html += `
                     <div class="match">
+
+                        <div class="stage">${match.stage}</div>
+
                         <div class="time">${match.time}</div>
+
                         <div class="teams">${match.home} vs ${match.away}</div>
-                        <div class="details">${match.venue}</div>
+
+                        <div class="details">
+                            ${match.venue}
+                            ${match.broadcast ? " | " + match.broadcast : ""}
+                        </div>
+
                     </div>
                 `;
 
