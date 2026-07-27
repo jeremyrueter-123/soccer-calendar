@@ -72,6 +72,30 @@ function parseCSV(data) {
 
 }
 
+function filterNextSevenDays(matches) {
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const sevenDays = new Date(today);
+    sevenDays.setDate(today.getDate() + 7);
+
+    return matches.filter(match => {
+
+        const parts = match.date.split("/");
+
+        const matchDate = new Date(
+            parts[2],          // Year
+            parts[0] - 1,      // Month (0-11)
+            parts[1]           // Day
+        );
+
+        return matchDate >= today && matchDate <= sevenDays;
+
+    });
+
+}
+
 function renderMatches(matches) {
 
     const grouped = {};
