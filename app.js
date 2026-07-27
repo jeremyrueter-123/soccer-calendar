@@ -24,8 +24,9 @@ function loadMatches() {
         .then(response => response.text())
         .then(data => {
 
-            const matches = parseCSV(data);
-            const html = renderMatches(matches);
+          const matches = parseCSV(data);
+          const upcomingMatches = filterNextSevenDays(matches);
+          const html = renderMatches(upcomingMatches);
 
             document.getElementById("matches").innerHTML = html;
 
