@@ -20,15 +20,18 @@ h2 {
 .date {
     font-size: 22px;
     font-weight: bold;
-    margin-top: 30px;
+    margin-top: 20px;
+    margin-bottom: 10px;
     border-bottom: 2px solid #222;
     padding-bottom: 5px;
 }
 
 .league {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: bold;
-    margin-top: 20px;
+    margin-top: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
 }
 
 .match {
@@ -41,41 +44,11 @@ h2 {
 
 .time {
     font-weight: bold;
-    margin-bottom: 6px;
-}
-
-.teams {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 6px;
-}
-
-.details {
-    color: #666;
-    font-size: 14px;
-}
-
-.date {
-    font-size: 22px;
-    font-weight: bold;
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-
-.league {
-    font-size: 14px;
-    font-weight: bold;
-    margin-top: 12px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-}
-
-.time {
-    font-weight: bold;
 }
 
 .teams {
     font-size: 17px;
+    font-weight: bold;
     margin: 3px 0;
 }
 
