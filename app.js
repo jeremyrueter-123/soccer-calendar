@@ -177,11 +177,12 @@ function renderMatches(matches) {
 }
 
 
-// Start the calendar
-loadMatches();
+document.addEventListener("DOMContentLoaded", function () {
 
+    loadMatches();
 
-// Competition filter listener
-document
-    .getElementById("competitionFilter")
-    .addEventListener("change", loadMatches);
+    document
+        .getElementById("competitionFilter")
+        .addEventListener("change", loadMatches);
+
+});
