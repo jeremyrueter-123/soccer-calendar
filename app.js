@@ -25,9 +25,18 @@ function loadMatches() {
         .then(data => {
 
           const matches = parseCSV(data);
-          const includedMatches = matches.filter(match => match.include === "Yes");
-          const upcomingMatches = filterNextSevenDays(includedMatches);
-          const html = renderMatches(upcomingMatches);
+
+const includedMatches = matches.filter(match => match.include === "Yes");
+
+const competition = document.getElementById("competitionFilter").value;
+
+const filteredMatches = competition === "All"
+    ? includedMatches
+    : includedMatches.filter(match => match.competition === competition);
+
+const upcomingMatches = filterNextSevenDays(filteredMatches);
+
+const html = renderMatches(upcomingMatches);
 
             document.getElementById("matches").innerHTML = html;
 
