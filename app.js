@@ -16,27 +16,25 @@ function formatDate(dateString) {
 }
 
 
-loadMatches();
-
 function loadMatches() {
 
     fetch(sheetURL)
         .then(response => response.text())
         .then(data => {
 
-          const matches = parseCSV(data);
+            const matches = parseCSV(data);
 
-const includedMatches = matches.filter(match => match.include === "Yes");
+            const includedMatches = matches.filter(match => match.include === "Yes");
 
-const competition = document.getElementById("competitionFilter").value;
+            const competition = document.getElementById("competitionFilter").value;
 
-const filteredMatches = competition === "All"
-    ? includedMatches
-    : includedMatches.filter(match => match.competition === competition);
+            const filteredMatches = competition === "All"
+                ? includedMatches
+                : includedMatches.filter(match => match.competition === competition);
 
-const upcomingMatches = filterNextSevenDays(filteredMatches);
+            const upcomingMatches = filterNextSevenDays(filteredMatches);
 
-const html = renderMatches(upcomingMatches);
+            const html = renderMatches(upcomingMatches);
 
             document.getElementById("matches").innerHTML = html;
 
@@ -51,6 +49,7 @@ const html = renderMatches(upcomingMatches);
         });
 
 }
+
 
 function parseCSV(data) {
 
@@ -90,6 +89,7 @@ function parseCSV(data) {
 
 }
 
+
 function filterNextSevenDays(matches) {
 
     const today = new Date();
@@ -103,9 +103,9 @@ function filterNextSevenDays(matches) {
         const parts = match.date.split("/");
 
         const matchDate = new Date(
-            parts[2],          // Year
-            parts[0] - 1,      // Month (0-11)
-            parts[1]           // Day
+            parts[2],
+            parts[0] - 1,
+            parts[1]
         );
 
         return matchDate >= today && matchDate <= sevenDays;
@@ -113,6 +113,7 @@ function filterNextSevenDays(matches) {
     });
 
 }
+
 
 function renderMatches(matches) {
 
@@ -174,3 +175,13 @@ function renderMatches(matches) {
     return html;
 
 }
+
+
+// Start the calendar
+loadMatches();
+
+
+// Competition filter listener
+document
+    .getElementById("competitionFilter")
+    .addEventListener("change", loadMatches);
