@@ -24,6 +24,8 @@ function loadMatches() {
 
             const matches = parseCSV(data);
 
+            console.log(matches);
+
             const includedMatches = matches.filter(match => match.include === "Yes");
 
             const competition = document.getElementById("competitionFilter").value;
