@@ -184,9 +184,11 @@ function renderMatches(matches) {
                 html += `
                     <div class="match">
 
-                        <div class="stage">${match.stage}</div>
+<div class="gender">${match.gender}</div>
 
-                        <div class="time">${match.time}</div>
+<div class="stage">${match.stage}</div>
+
+<div class="time">${match.time}</div>
 
                         <div class="teams">${match.home} vs ${match.away}</div>
 
