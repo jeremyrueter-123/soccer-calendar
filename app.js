@@ -42,7 +42,9 @@ const filteredMatches = competition === "All"
             match.gender === "Women"
         );
 
-            const upcomingMatches = filterNextSevenDays(filteredMatches);
+            const timeFilter = document.getElementById("timeFilter").value;
+
+            const upcomingMatches = filterByTime(filteredMatches, timeFilter);
 
             const html = renderMatches(upcomingMatches);
 
