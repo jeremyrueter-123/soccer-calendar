@@ -62,3 +62,9 @@ h2 {
     color: #666;
     font-size: 14px;
 }
+
+.gender {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
