@@ -30,9 +30,17 @@ function loadMatches() {
 
             const competition = document.getElementById("competitionFilter").value;
 
-            const filteredMatches = competition === "All"
-                ? includedMatches
-                : includedMatches.filter(match => match.competition === competition);
+const filteredMatches = competition === "All"
+    ? includedMatches
+    : competition === "NCAA D1 Men"
+        ? includedMatches.filter(match =>
+            match.level === "NCAA D1" &&
+            match.gender === "Men"
+        )
+        : includedMatches.filter(match =>
+            match.level === "NCAA D1" &&
+            match.gender === "Women"
+        );
 
             const upcomingMatches = filterNextSevenDays(filteredMatches);
 
