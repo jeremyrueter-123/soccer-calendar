@@ -217,4 +217,8 @@ document.addEventListener("DOMContentLoaded", function () {
         .getElementById("competitionFilter")
         .addEventListener("change", loadMatches);
 
+    document
+        .getElementById("timeFilter")
+        .addEventListener("change", loadMatches);
+
 });
