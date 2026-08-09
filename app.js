@@ -180,6 +180,15 @@ endDate.setDate(today.getDate() + days - 1);
 
 function renderMatches(matches) {
 
+    matches.sort((a, b) => {
+
+        const dateA = new Date(a.date + " " + a.time);
+        const dateB = new Date(b.date + " " + b.time);
+
+        return dateA - dateB;
+
+    });
+
     const grouped = {};
 
     matches.forEach(match => {
