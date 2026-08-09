@@ -30,6 +30,20 @@ function loadMatches() {
 
             const competition = document.getElementById("competitionFilter").value;
 
+          const competitionDescription =
+    document.getElementById("competitionDescription");
+
+if (competition === "All") {
+    competitionDescription.textContent =
+        "Upcoming Maryland Soccer Matches";
+} else if (competition === "NCAA D1 Men") {
+    competitionDescription.textContent =
+        "Upcoming NCAA D1 Men's Matches";
+} else {
+    competitionDescription.textContent =
+        "Upcoming NCAA D1 Women's Matches";
+}
+
 const filteredMatches = competition === "All"
     ? includedMatches
     : competition === "NCAA D1 Men"
