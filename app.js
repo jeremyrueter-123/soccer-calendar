@@ -7,15 +7,23 @@ function formatDate(dateString) {
 
     const date = new Date(dateString);
 
-    return date.toLocaleDateString("en-US", {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    date.setHours(0, 0, 0, 0);
+
+    const formattedDate = date.toLocaleDateString("en-US", {
         weekday: "long",
         month: "long",
         day: "numeric"
     });
 
+    if (date.getTime() === today.getTime()) {
+        return "Today — " + formattedDate;
+    }
+
+    return formattedDate;
 }
-
-
 function loadMatches() {
 
     fetch(sheetURL)
