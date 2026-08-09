@@ -224,13 +224,17 @@ function renderMatches(matches) {
                 html += `
                     <div class="match">
 
-<div class="gender">${match.gender}</div>
+                    <div class="gender">${match.gender}</div>
 
-<div class="stage">${match.stage}</div>
+                    <div class="stage">${match.stage}</div>
+  
+                    <div class="time">${match.time}</div>
 
-<div class="time">${match.time}</div>
+${match.status !== "Scheduled"
+    ? `<div class="status">${match.status}</div>`
+    : ""}
 
-                        <div class="teams">${match.home} vs ${match.away}</div>
+<div class="teams">${match.home} vs ${match.away}</div>
 
                         <div class="details">
                             ${match.venue}
