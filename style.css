@@ -67,3 +67,9 @@ h2 {
     font-weight: bold;
     margin-bottom: 2px;
 }
+
+.status {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
