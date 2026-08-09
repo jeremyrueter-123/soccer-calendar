@@ -54,18 +54,47 @@ if (competition === "All") {
 
 let filteredMatches = includedMatches;
 
-if (competition !== "All") {
-
-    const parts = competition.split(" ");
-
-    const level = parts[0] + " " + parts[1];
-    const gender = parts[2];
-
+if (competition === "NCAA D1 Men") {
     filteredMatches = includedMatches.filter(match =>
-        match.level === level &&
-        match.gender === gender
+        match.level === "NCAA D1" &&
+        match.gender === "Men"
     );
+}
 
+if (competition === "NCAA D1 Women") {
+    filteredMatches = includedMatches.filter(match =>
+        match.level === "NCAA D1" &&
+        match.gender === "Women"
+    );
+}
+
+if (competition === "NCAA D2 Men") {
+    filteredMatches = includedMatches.filter(match =>
+        match.level === "NCAA D2" &&
+        match.gender === "Men"
+    );
+}
+
+if (competition === "NCAA D2 Women") {
+    filteredMatches = includedMatches.filter(match =>
+        match.level === "NCAA D2" &&
+        match.gender === "Women"
+    );
+}
+
+if (competition === "NCAA D3 Men") {
+    filteredMatches = includedMatches.filter(match =>
+        match.level === "NCAA D3" &&
+        match.gender === "Men"
+    );
+}
+
+if (competition === "NCAA D3 Women") {
+    filteredMatches = includedMatches.filter(match =>
+        match.level === "NCAA D3" &&
+        match.gender === "Women"
+    );
+}
 }const timeFilter = document.getElementById("timeFilter").value;
 
           const timeDescription = document.getElementById("timeDescription");
