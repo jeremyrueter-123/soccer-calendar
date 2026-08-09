@@ -47,9 +47,21 @@ if (competition === "All") {
 } else if (competition === "NCAA D1 Men") {
     competitionDescription.textContent =
         "Upcoming NCAA D1 Men's Matches";
-} else {
+} else if (competition === "NCAA D1 Women") {
     competitionDescription.textContent =
         "Upcoming NCAA D1 Women's Matches";
+} else if (competition === "NCAA D2 Men") {
+    competitionDescription.textContent =
+        "Upcoming NCAA D2 Men's Matches";
+} else if (competition === "NCAA D2 Women") {
+    competitionDescription.textContent =
+        "Upcoming NCAA D2 Women's Matches";
+} else if (competition === "NCAA D3 Men") {
+    competitionDescription.textContent =
+        "Upcoming NCAA D3 Men's Matches";
+} else if (competition === "NCAA D3 Women") {
+    competitionDescription.textContent =
+        "Upcoming NCAA D3 Women's Matches";
 }
 
 let filteredMatches = includedMatches;
