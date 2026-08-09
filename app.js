@@ -44,6 +44,16 @@ const filteredMatches = competition === "All"
 
 const timeFilter = document.getElementById("timeFilter").value;
 
+          const timeDescription = document.getElementById("timeDescription");
+
+if (timeFilter === "7") {
+    timeDescription.textContent = "Next 7 days";
+} else if (timeFilter === "30") {
+    timeDescription.textContent = "Next 30 days";
+} else {
+    timeDescription.textContent = "All future games";
+}
+
 const upcomingMatches = filterByTime(filteredMatches, timeFilter);
 
 const html = renderMatches(upcomingMatches);
