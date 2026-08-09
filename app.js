@@ -44,18 +44,21 @@ if (competition === "All") {
         "Upcoming NCAA D1 Women's Matches";
 }
 
-const filteredMatches = competition === "All"
-    ? includedMatches
-    : competition === "NCAA D1 Men"
-        ? includedMatches.filter(match =>
-            match.level === "NCAA D1" &&
-            match.gender === "Men"
-        )
-        : includedMatches.filter(match =>
-            match.level === "NCAA D1" &&
-            match.gender === "Women"
-        );
+let filteredMatches = includedMatches;
 
+if (competition === "NCAA D1 Men") {
+    filteredMatches = includedMatches.filter(match =>
+        match.level === "NCAA D1" &&
+        match.gender === "Men"
+    );
+}
+
+if (competition === "NCAA D1 Women") {
+    filteredMatches = includedMatches.filter(match =>
+        match.level === "NCAA D1" &&
+        match.gender === "Women"
+    );
+}
 const timeFilter = document.getElementById("timeFilter").value;
 
           const timeDescription = document.getElementById("timeDescription");
