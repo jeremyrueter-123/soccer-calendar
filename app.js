@@ -95,7 +95,7 @@ if (competition === "NCAA D3 Women") {
         match.gender === "Women"
     );
 }
-}const timeFilter = document.getElementById("timeFilter").value;
+const timeFilter = document.getElementById("timeFilter").value;
 
           const timeDescription = document.getElementById("timeDescription");
 
