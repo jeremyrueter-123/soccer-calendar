@@ -54,20 +54,19 @@ if (competition === "All") {
 
 let filteredMatches = includedMatches;
 
-if (competition === "NCAA D1 Men") {
-    filteredMatches = includedMatches.filter(match =>
-        match.level === "NCAA D1" &&
-        match.gender === "Men"
-    );
-}
+if (competition !== "All") {
 
-if (competition === "NCAA D1 Women") {
+    const parts = competition.split(" ");
+
+    const level = parts[0] + " " + parts[1];
+    const gender = parts[2];
+
     filteredMatches = includedMatches.filter(match =>
-        match.level === "NCAA D1" &&
-        match.gender === "Women"
+        match.level === level &&
+        match.gender === gender
     );
-}
-const timeFilter = document.getElementById("timeFilter").value;
+
+}const timeFilter = document.getElementById("timeFilter").value;
 
           const timeDescription = document.getElementById("timeDescription");
 
