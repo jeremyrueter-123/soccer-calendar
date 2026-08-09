@@ -73,10 +73,14 @@ if (timeFilter === "7") {
 
 const upcomingMatches = filterByTime(filteredMatches, timeFilter);
 
-const html = renderMatches(upcomingMatches);
+if (upcomingMatches.length === 0) {
+    document.getElementById("matches").innerHTML =
+        "<p>No matches found for this selection.</p>";
+} else {
+    const html = renderMatches(upcomingMatches);
 
-            document.getElementById("matches").innerHTML = html;
-
+    document.getElementById("matches").innerHTML = html;
+}
         })
         .catch(error => {
 
