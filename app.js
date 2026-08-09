@@ -154,8 +154,8 @@ function filterByTime(matches, timeFilter) {
 
     const days = Number(timeFilter);
 
-    const endDate = new Date(today);
-    endDate.setDate(today.getDate() + days);
+const endDate = new Date(today);
+endDate.setDate(today.getDate() + days - 1);
 
     return matches.filter(match => {
 
