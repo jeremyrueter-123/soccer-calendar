@@ -18,12 +18,12 @@ h2 {
 }
 
 .date {
-    font-size: 22px;
+    font-size: 21px;
     font-weight: bold;
-    margin-top: 20px;
-    margin-bottom: 10px;
+    margin-top: 28px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
     border-bottom: 2px solid #222;
-    padding-bottom: 5px;
 }
 
 .league {
