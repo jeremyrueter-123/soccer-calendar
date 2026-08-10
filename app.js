@@ -284,8 +284,6 @@ ${match.status !== "Scheduled"
     ? `<div class="status">${match.status}</div>`
     : ""}
 
-<div class="teams">${match.home} vs ${match.away}</div>
-
                         <div class="details">
                             ${match.venue}
                             ${match.broadcast ? " | " + match.broadcast : ""}
