@@ -283,15 +283,15 @@ function renderMatches(matches) {
   
                     <div class="time">${match.time}</div>
 
-                    <div class="teams">
-    ${match.home === "UMBC"
-        ? `<img src="images/UMBC.png" class="team-logo">`
+                   <div class="teams">
+    ${teamLogos[match.home]
+        ? `<img src="${teamLogos[match.home]}" class="team-logo">`
         : ""}
     ${match.home}
     vs
     ${match.away}
-    ${match.away === "Mount St. Mary's"
-        ? `<img src="images/mount-st-marys.gif" class="team-logo">`
+    ${teamLogos[match.away]
+        ? `<img src="${teamLogos[match.away]}" class="team-logo">`
         : ""}
 </div>
 
