@@ -278,7 +278,17 @@ function renderMatches(matches) {
   
                     <div class="time">${match.time}</div>
 
-                    <div class="teams">${match.home} vs ${match.away}</div>
+                    <div class="teams">
+    ${match.home === "UMBC"
+        ? `<img src="images/UMBC.png" class="team-logo">`
+        : ""}
+    ${match.home}
+    vs
+    ${match.away}
+    ${match.away === "Mount St. Mary's"
+        ? `<img src="images/mount-st-marys.gif" class="team-logo">`
+        : ""}
+</div>
 
 ${match.status !== "Scheduled"
     ? `<div class="status">${match.status}</div>`
