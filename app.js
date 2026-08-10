@@ -278,6 +278,8 @@ function renderMatches(matches) {
   
                     <div class="time">${match.time}</div>
 
+                    <div class="teams">${match.home} vs ${match.away}</div>
+
 ${match.status !== "Scheduled"
     ? `<div class="status">${match.status}</div>`
     : ""}
