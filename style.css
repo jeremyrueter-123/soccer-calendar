@@ -24,7 +24,8 @@ h2 {
     margin-top: 28px;
     margin-bottom: 12px;
     padding-bottom: 6px;
-    border-bottom: 2px solid #222;
+    color: #d2232a;
+    border-bottom: 2px solid #d2232a;
 }
 
 .league {
