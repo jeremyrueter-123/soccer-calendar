@@ -81,10 +81,11 @@ select {
     padding: 6px 8px;
     margin-right: 16px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #d2232a;
     border-radius: 5px;
     background-color: #fff;
 }
+
 .status {
     font-size: 13px;
     font-weight: bold;
