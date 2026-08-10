@@ -1,6 +1,10 @@
 const teamLogos = {
     "UMBC": "images/UMBC.png",
-    "Mount St. Mary's": "images/mount-st-marys.gif"
+    "Mount St. Mary's": "images/mount-st-marys.png",
+    "Maryland": "images/maryland.png",
+    "Loyola Maryland": "images/loyola.png",
+    "Navy": "images/navy.png",
+    "Towson": "images/towson.png"
 };
 
 const sheetURL =
