@@ -1,4 +1,3 @@
-```javascript
 const teamLogos = {
     "UMBC": "images/UMBC.png",
     "Mount St. Mary's": "images/mount-st-marys.png",
@@ -17,7 +16,6 @@ const teamLogos = {
     "Stevenson": "images/stevenson.png",
     "Washington College": "images/washington-college.png"
 };
-```
 
 
 const sheetURL =
