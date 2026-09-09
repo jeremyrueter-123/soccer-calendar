@@ -1,16 +1,24 @@
+```javascript
 const teamLogos = {
     "UMBC": "images/UMBC.png",
     "Mount St. Mary's": "images/mount-st-marys.png",
     "Maryland": "images/maryland.png",
-    "Loyola": "images/loyola.png",
+    "Loyola Maryland": "images/loyola.png",
     "Navy": "images/navy.png",
     "Towson": "images/towson.png",
     "Bowie State": "images/bowie-state.png",
     "Frostburg State": "images/frostburg-state.png",
     "Goucher": "images/goucher.png",
     "Hood": "images/hood.png",
-    "Johns Hopkins": "images/johns-hopkins.png"
+    "Johns Hopkins": "images/johns-hopkins.png",
+    "McDaniel": "images/mcdaniel.png",
+    "Salisbury": "images/salisbury.png",
+    "St. Mary's": "images/st-marys.png",
+    "Stevenson": "images/stevenson.png",
+    "Washington College": "images/washington-college.png"
 };
+```
+
 
 const sheetURL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vTMUQiKrsd5pS1Tq7V1Qghgr6E0pCVhQvF7JiHiOgnJ_C_uuxCNljnCMBXWwzHK7WKBbo_x4aopyuJ1/pub?gid=924645803&single=true&output=csv";
