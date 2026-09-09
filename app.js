@@ -11,6 +11,7 @@ const teamLogos = {
     "Hood": "images/hood.png",
     "Johns Hopkins": "images/johns-hopkins.png",
     "McDaniel": "images/mcdaniel.png",
+    "Notre Dame (MD)": "images/notre-dame-md.png",
     "Salisbury": "images/salisbury.png",
     "St. Mary's": "images/st-marys.png",
     "Stevenson": "images/stevenson.png",
