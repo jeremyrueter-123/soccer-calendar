@@ -2,9 +2,14 @@ const teamLogos = {
     "UMBC": "images/UMBC.png",
     "Mount St. Mary's": "images/mount-st-marys.png",
     "Maryland": "images/maryland.png",
-    "Loyola": "images/loyola.png",
+    "Loyola Maryland": "images/loyola.png",
     "Navy": "images/navy.png",
-    "Towson": "images/towson.png"
+    "Towson": "images/towson.png",
+    "Bowie State": "images/bowie-state.png",
+    "Frostburg State": "images/frostburg-state.png",
+    "Goucher": "images/goucher.png",
+    "Hood": "images/hood.png",
+    "Johns Hopkins": "images/johns-hopkins.png"
 };
 
 const sheetURL =
