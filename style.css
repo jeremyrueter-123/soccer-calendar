@@ -105,15 +105,16 @@ select {
 }
 
 #competitionFilter {
-    width: 145px;
+    flex: 0 0 145px;
 }
 
 #teamFilter {
-    width: 190px;
+    flex: 1;
+    min-width: 0;
 }
 
 #timeFilter {
-    width: 150px;
+    flex: 0 0 145px;
 }
 
 .status {
