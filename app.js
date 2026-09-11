@@ -57,6 +57,18 @@ function loadMatches() {
 
             const includedMatches = matches.filter(match => match.include === "Yes");
 
+            const teamFilter = document.getElementById("teamFilter");
+
+const teams = [...new Set(
+    includedMatches.flatMap(match => [match.home, match.away])
+)].sort();
+
+teamFilter.innerHTML = '<option value="All">All Teams</option>';
+
+teams.forEach(team => {
+    teamFilter.innerHTML += `<option value="${team}">${team}</option>`;
+});
+
             const competition = document.getElementById("competitionFilter").value;
 
           const competitionDescription =
