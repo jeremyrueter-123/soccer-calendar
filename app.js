@@ -59,9 +59,7 @@ function loadMatches() {
 
             const teamFilter = document.getElementById("teamFilter");
 
-const teams = [...new Set(
-    includedMatches.flatMap(match => [match.home, match.away])
-)].sort();
+const teams = Object.keys(teamLogos).sort();
 
 teamFilter.innerHTML = '<option value="All">All Teams</option>';
 
