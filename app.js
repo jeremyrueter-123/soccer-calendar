@@ -56,19 +56,6 @@ function loadMatches() {
 
             const includedMatches = matches.filter(match => match.include === "Yes");
 
-const teamFilter = document.getElementById("teamFilter");
-const selectedTeam = teamFilter.value;
-
-const teams = Object.keys(teamLogos).sort();
-
-teamFilter.innerHTML = '<option value="All">All Teams</option>';
-
-teams.forEach(team => {
-    teamFilter.innerHTML += `<option value="${team}">${team}</option>`;
-});
-
-teamFilter.value = selectedTeam;
-
             const competition = document.getElementById("competitionFilter").value;
 
           const competitionDescription =
@@ -141,6 +128,53 @@ if (competition === "NCAA D3 Women") {
     );
 }
 
+const teamFilter = document.getElementById("teamFilter");
+const selectedTeam = teamFilter.value;
+
+let availableTeams = Object.keys(teamLogos);
+
+if (competition !== "All") {
+    availableTeams = includedMatches
+        .filter(match => {
+            if (competition === "NCAA D1 Men") {
+                return match.level === "NCAA D1" && match.gender === "Men";
+            }
+            if (competition === "NCAA D1 Women") {
+                return match.level === "NCAA D1" && match.gender === "Women";
+            }
+            if (competition === "NCAA D2 Men") {
+                return match.level === "NCAA D2" && match.gender === "Men";
+            }
+            if (competition === "NCAA D2 Women") {
+                return match.level === "NCAA D2" && match.gender === "Women";
+            }
+            if (competition === "NCAA D3 Men") {
+                return match.level === "NCAA D3" && match.gender === "Men";
+            }
+            if (competition === "NCAA D3 Women") {
+                return match.level === "NCAA D3" && match.gender === "Women";
+            }
+        })
+        .flatMap(match => [match.home, match.away])
+        .filter(team => teamLogos[team]);
+
+    availableTeams = [...new Set(availableTeams)];
+}
+
+availableTeams.sort();
+
+teamFilter.innerHTML = '<option value="All">All Teams</option>';
+
+availableTeams.forEach(team => {
+    teamFilter.innerHTML += `<option value="${team}">${team}</option>`;
+});
+
+if (availableTeams.includes(selectedTeam)) {
+    teamFilter.value = selectedTeam;
+} else {
+    teamFilter.value = "All";
+}
+            
 if (selectedTeam !== "All") {
     filteredMatches = filteredMatches.filter(match =>
         match.home === selectedTeam ||
