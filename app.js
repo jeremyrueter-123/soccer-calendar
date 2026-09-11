@@ -138,7 +138,16 @@ if (competition === "NCAA D3 Women") {
         match.gender === "Women"
     );
 }
-const timeFilter = document.getElementById("timeFilter").value;
+
+            const selectedTeam = document.getElementById("teamFilter").value;
+
+if (selectedTeam !== "All") {
+    filteredMatches = filteredMatches.filter(match =>
+        match.home === selectedTeam ||
+        match.away === selectedTeam
+    );
+}
+            const timeFilter = document.getElementById("timeFilter").value;
 
           const timeDescription = document.getElementById("timeDescription");
 
@@ -355,5 +364,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document
         .getElementById("timeFilter")
         .addEventListener("change", loadMatches);
+
+    document
+    .getElementById("teamFilter")
+    .addEventListener("change", loadMatches);
 
 });
