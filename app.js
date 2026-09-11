@@ -57,7 +57,8 @@ function loadMatches() {
 
             const includedMatches = matches.filter(match => match.include === "Yes");
 
-            const teamFilter = document.getElementById("teamFilter");
+const teamFilter = document.getElementById("teamFilter");
+const selectedTeam = teamFilter.value;
 
 const teams = Object.keys(teamLogos).sort();
 
@@ -66,6 +67,8 @@ teamFilter.innerHTML = '<option value="All">All Teams</option>';
 teams.forEach(team => {
     teamFilter.innerHTML += `<option value="${team}">${team}</option>`;
 });
+
+teamFilter.value = selectedTeam;
 
             const competition = document.getElementById("competitionFilter").value;
 
