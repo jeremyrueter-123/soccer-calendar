@@ -94,6 +94,17 @@ select {
     cursor: pointer;
 }
 
+.filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filters select {
+    flex: 1;
+    min-width: 0;
+}
+
 .status {
     font-size: 13px;
     font-weight: bold;
@@ -120,12 +131,16 @@ select {
         max-width: 300px;
         margin-bottom: 12px;
     }
-
+    
     label {
         display: block;
         margin-bottom: 4px;
     }
-
+    
+    .filters {
+        display: block;
+    }
+    
     .match {
         padding: 10px;
     }
