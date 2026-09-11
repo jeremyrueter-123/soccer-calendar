@@ -142,8 +142,6 @@ if (competition === "NCAA D3 Women") {
     );
 }
 
-            const selectedTeam = document.getElementById("teamFilter").value;
-
 if (selectedTeam !== "All") {
     filteredMatches = filteredMatches.filter(match =>
         match.home === selectedTeam ||
