@@ -105,7 +105,8 @@ select {
 }
 
 #competitionFilter {
-    flex: 0 0 145px;
+    flex: 0 0 155px;
+    width: 155px;
 }
 
 #teamFilter {
