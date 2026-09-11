@@ -105,6 +105,10 @@ select {
     min-width: 0;
 }
 
+#competitionFilter {
+    min-width: 135px;
+}
+
 .status {
     font-size: 13px;
     font-weight: bold;
