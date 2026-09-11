@@ -101,12 +101,19 @@ select {
 }
 
 .filters select {
-    flex: 1;
     min-width: 0;
 }
 
 #competitionFilter {
-    min-width: 135px;
+    width: 145px;
+}
+
+#teamFilter {
+    width: 190px;
+}
+
+#timeFilter {
+    width: 150px;
 }
 
 .status {
