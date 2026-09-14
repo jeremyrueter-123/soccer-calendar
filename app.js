@@ -32,7 +32,7 @@ function formatDate(dateString) {
 
     date.setHours(0, 0, 0, 0);
 
-    const formattedDate = date.toLocaleDateString("en-US", {
+     formattedDate = date.toLocaleDateString("en-US", {
         weekday: "long",
         month: "long",
         day: "numeric"
@@ -50,15 +50,15 @@ function loadMatches() {
         .then(response => response.text())
         .then(data => {
 
-            const matches = parseCSV(data);
+             matches = parseCSV(data);
 
             console.log(matches);
 
-            const includedMatches = matches.filter(match => match.include === "Yes");
+             includedMatches = matches.filter(match => match.include === "Yes");
 
-            const competition = document.getElementById("competitionFilter").value;
+             competition = document.getElementById("competitionFilter").value;
 
-          const competitionDescription =
+           competitionDescription =
     document.getElementById("competitionDescription");
 
 if (competition === "All") {
@@ -128,8 +128,8 @@ if (competition === "NCAA D3 Women") {
     );
 }
 
-const teamFilter = document.getElementById("teamFilter");
-const selectedTeam = teamFilter.value;
+ teamFilter = document.getElementById("teamFilter");
+ selectedTeam = teamFilter.value;
 
 let availableTeams = Object.keys(teamLogos);
 
@@ -181,9 +181,9 @@ if (selectedTeam !== "All") {
         match.away === selectedTeam
     );
 }
-            const timeFilter = document.getElementById("timeFilter").value;
+             timeFilter = document.getElementById("timeFilter").value;
 
-          const timeDescription = document.getElementById("timeDescription");
+           timeDescription = document.getElementById("timeDescription");
 
 if (timeFilter === "7") {
     timeDescription.textContent = "Next 7 days";
@@ -193,13 +193,13 @@ if (timeFilter === "7") {
     timeDescription.textContent = "All future games";
 }
 
-const upcomingMatches = filterByTime(filteredMatches, timeFilter);
+ upcomingMatches = filterByTime(filteredMatches, timeFilter);
 
 if (upcomingMatches.length === 0) {
     document.getElementById("matches").innerHTML =
         "<p>No matches found for this selection.</p>";
 } else {
-    const html = renderMatches(upcomingMatches);
+     html = renderMatches(upcomingMatches);
 
     document.getElementById("matches").innerHTML = html;
 }
@@ -218,13 +218,100 @@ if (upcomingMatches.length === 0) {
 
 function parseCSV(data) {
 
-    const rows = data.split("\n");
+     rows = data.split("\n");
 
-    const matches = [];
+     matches = [];
 
     rows.slice(1).forEach(row => {
 
-        const columns = row.split(",");
+        c```js
+function parseCSV(data) {
+
+    const rows = [];
+    let row = [];
+    let field = "";
+    let insideQuotes = false;
+
+    for (let i = 0; i < data.length; i++) {
+
+        const char = data[i];
+        const nextChar = data[i + 1];
+
+        if (char === '"' && insideQuotes && nextChar === '"') {
+            // Two quotes inside a quoted field = one quote
+            field += '"';
+            i++;
+        }
+
+        else if (char === '"') {
+            // Start or end of a quoted field
+            insideQuotes = !insideQuotes;
+        }
+
+        else if (char === "," && !insideQuotes) {
+            // End of field
+            row.push(field);
+            field = "";
+        }
+
+        else if ((char === "\n" || char === "\r") && !insideQuotes) {
+
+            // End of row
+            if (char === "\r" && nextChar === "\n") {
+                i++;
+            }
+
+            row.push(field);
+            rows.push(row);
+
+            row = [];
+            field = "";
+        }
+
+        else {
+            field += char;
+        }
+    }
+
+    // Add the final field/row
+    if (field !== "" || row.length > 0) {
+        row.push(field);
+        rows.push(row);
+    }
+
+    const matches = [];
+
+    rows.slice(1).forEach(columns => {
+
+        if (columns.length >= 13) {
+
+            matches.push({
+
+                date: columns[0].trim(),
+                time: columns[1].trim(),
+                competition: columns[2].trim(),
+                stage: columns[3].trim(),
+                gender: columns[4].trim(),
+                level: columns[5].trim(),
+                home: columns[6].trim(),
+                away: columns[7].trim(),
+                venue: columns[8].trim(),
+                broadcast: columns[9].trim(),
+                notes: columns[10].trim(),
+                status: columns[11].trim(),
+                include: columns[12].trim()
+
+            });
+
+        }
+
+    });
+
+    return matches;
+
+}
+```
+
 
         if (columns.length > 12) {
 
