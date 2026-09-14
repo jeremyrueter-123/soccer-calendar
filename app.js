@@ -558,4 +558,3 @@ document.addEventListener("DOMContentLoaded", function () {
         .addEventListener("change", loadMatches);
 
 });
-```
