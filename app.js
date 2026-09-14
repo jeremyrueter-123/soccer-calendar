@@ -1,3 +1,4 @@
+```js
 const teamLogos = {
     "UMBC": "images/UMBC.png",
     "Mount St. Mary's": "images/mount-st-marys.png",
@@ -32,7 +33,7 @@ function formatDate(dateString) {
 
     date.setHours(0, 0, 0, 0);
 
-     formattedDate = date.toLocaleDateString("en-US", {
+    const formattedDate = date.toLocaleDateString("en-US", {
         weekday: "long",
         month: "long",
         day: "numeric"
@@ -44,166 +45,209 @@ function formatDate(dateString) {
 
     return formattedDate;
 }
+
+
 function loadMatches() {
 
     fetch(sheetURL)
         .then(response => response.text())
         .then(data => {
 
-             matches = parseCSV(data);
+            const matches = parseCSV(data);
 
             console.log(matches);
 
-             includedMatches = matches.filter(match => match.include === "Yes");
+            const includedMatches = matches.filter(match => match.include === "Yes");
 
-             competition = document.getElementById("competitionFilter").value;
+            const competition = document.getElementById("competitionFilter").value;
 
-           competitionDescription =
-    document.getElementById("competitionDescription");
+            const competitionDescription =
+                document.getElementById("competitionDescription");
 
-if (competition === "All") {
-    competitionDescription.textContent =
-        "Upcoming Maryland Soccer Matches";
-} else if (competition === "NCAA D1 Men") {
-    competitionDescription.textContent =
-        "Upcoming NCAA D1 Men's Matches";
-} else if (competition === "NCAA D1 Women") {
-    competitionDescription.textContent =
-        "Upcoming NCAA D1 Women's Matches";
-} else if (competition === "NCAA D2 Men") {
-    competitionDescription.textContent =
-        "Upcoming NCAA D2 Men's Matches";
-} else if (competition === "NCAA D2 Women") {
-    competitionDescription.textContent =
-        "Upcoming NCAA D2 Women's Matches";
-} else if (competition === "NCAA D3 Men") {
-    competitionDescription.textContent =
-        "Upcoming NCAA D3 Men's Matches";
-} else if (competition === "NCAA D3 Women") {
-    competitionDescription.textContent =
-        "Upcoming NCAA D3 Women's Matches";
-}
+            if (competition === "All") {
+                competitionDescription.textContent =
+                    "Upcoming Maryland Soccer Matches";
+            } else if (competition === "NCAA D1 Men") {
+                competitionDescription.textContent =
+                    "Upcoming NCAA D1 Men's Matches";
+            } else if (competition === "NCAA D1 Women") {
+                competitionDescription.textContent =
+                    "Upcoming NCAA D1 Women's Matches";
+            } else if (competition === "NCAA D2 Men") {
+                competitionDescription.textContent =
+                    "Upcoming NCAA D2 Men's Matches";
+            } else if (competition === "NCAA D2 Women") {
+                competitionDescription.textContent =
+                    "Upcoming NCAA D2 Women's Matches";
+            } else if (competition === "NCAA D3 Men") {
+                competitionDescription.textContent =
+                    "Upcoming NCAA D3 Men's Matches";
+            } else if (competition === "NCAA D3 Women") {
+                competitionDescription.textContent =
+                    "Upcoming NCAA D3 Women's Matches";
+            }
 
-let filteredMatches = includedMatches;
+            let filteredMatches = includedMatches;
 
-if (competition === "NCAA D1 Men") {
-    filteredMatches = includedMatches.filter(match =>
-        match.level === "NCAA D1" &&
-        match.gender === "Men"
-    );
-}
-
-if (competition === "NCAA D1 Women") {
-    filteredMatches = includedMatches.filter(match =>
-        match.level === "NCAA D1" &&
-        match.gender === "Women"
-    );
-}
-
-if (competition === "NCAA D2 Men") {
-    filteredMatches = includedMatches.filter(match =>
-        match.level === "NCAA D2" &&
-        match.gender === "Men"
-    );
-}
-
-if (competition === "NCAA D2 Women") {
-    filteredMatches = includedMatches.filter(match =>
-        match.level === "NCAA D2" &&
-        match.gender === "Women"
-    );
-}
-
-if (competition === "NCAA D3 Men") {
-    filteredMatches = includedMatches.filter(match =>
-        match.level === "NCAA D3" &&
-        match.gender === "Men"
-    );
-}
-
-if (competition === "NCAA D3 Women") {
-    filteredMatches = includedMatches.filter(match =>
-        match.level === "NCAA D3" &&
-        match.gender === "Women"
-    );
-}
-
- teamFilter = document.getElementById("teamFilter");
- selectedTeam = teamFilter.value;
-
-let availableTeams = Object.keys(teamLogos);
-
-if (competition !== "All") {
-    availableTeams = includedMatches
-        .filter(match => {
             if (competition === "NCAA D1 Men") {
-                return match.level === "NCAA D1" && match.gender === "Men";
+                filteredMatches = includedMatches.filter(match =>
+                    match.level === "NCAA D1" &&
+                    match.gender === "Men"
+                );
             }
+
             if (competition === "NCAA D1 Women") {
-                return match.level === "NCAA D1" && match.gender === "Women";
+                filteredMatches = includedMatches.filter(match =>
+                    match.level === "NCAA D1" &&
+                    match.gender === "Women"
+                );
             }
+
             if (competition === "NCAA D2 Men") {
-                return match.level === "NCAA D2" && match.gender === "Men";
+                filteredMatches = includedMatches.filter(match =>
+                    match.level === "NCAA D2" &&
+                    match.gender === "Men"
+                );
             }
+
             if (competition === "NCAA D2 Women") {
-                return match.level === "NCAA D2" && match.gender === "Women";
+                filteredMatches = includedMatches.filter(match =>
+                    match.level === "NCAA D2" &&
+                    match.gender === "Women"
+                );
             }
+
             if (competition === "NCAA D3 Men") {
-                return match.level === "NCAA D3" && match.gender === "Men";
+                filteredMatches = includedMatches.filter(match =>
+                    match.level === "NCAA D3" &&
+                    match.gender === "Men"
+                );
             }
+
             if (competition === "NCAA D3 Women") {
-                return match.level === "NCAA D3" && match.gender === "Women";
+                filteredMatches = includedMatches.filter(match =>
+                    match.level === "NCAA D3" &&
+                    match.gender === "Women"
+                );
             }
+
+
+            const teamFilter = document.getElementById("teamFilter");
+            const selectedTeam = teamFilter.value;
+
+            let availableTeams = Object.keys(teamLogos);
+
+            if (competition !== "All") {
+
+                availableTeams = includedMatches
+                    .filter(match => {
+
+                        if (competition === "NCAA D1 Men") {
+                            return match.level === "NCAA D1" && match.gender === "Men";
+                        }
+
+                        if (competition === "NCAA D1 Women") {
+                            return match.level === "NCAA D1" && match.gender === "Women";
+                        }
+
+                        if (competition === "NCAA D2 Men") {
+                            return match.level === "NCAA D2" && match.gender === "Men";
+                        }
+
+                        if (competition === "NCAA D2 Women") {
+                            return match.level === "NCAA D2" && match.gender === "Women";
+                        }
+
+                        if (competition === "NCAA D3 Men") {
+                            return match.level === "NCAA D3" && match.gender === "Men";
+                        }
+
+                        if (competition === "NCAA D3 Women") {
+                            return match.level === "NCAA D3" && match.gender === "Women";
+                        }
+
+                    })
+                    .flatMap(match => [match.home, match.away])
+                    .filter(team => teamLogos[team]);
+
+                availableTeams = [...new Set(availableTeams)];
+            }
+
+            availableTeams.sort();
+
+            teamFilter.innerHTML =
+                '<option value="All">All Teams</option>';
+
+            availableTeams.forEach(team => {
+
+                teamFilter.innerHTML +=
+                    `<option value="${team}">${team}</option>`;
+
+            });
+
+            if (availableTeams.includes(selectedTeam)) {
+                teamFilter.value = selectedTeam;
+            } else {
+                teamFilter.value = "All";
+            }
+
+
+            if (selectedTeam !== "All") {
+
+                filteredMatches = filteredMatches.filter(match =>
+                    match.home === selectedTeam ||
+                    match.away === selectedTeam
+                );
+
+            }
+
+
+            const timeFilter =
+                document.getElementById("timeFilter").value;
+
+            const timeDescription =
+                document.getElementById("timeDescription");
+
+
+            if (timeFilter === "7") {
+
+                timeDescription.textContent =
+                    "Next 7 days";
+
+            } else if (timeFilter === "30") {
+
+                timeDescription.textContent =
+                    "Next 30 days";
+
+            } else {
+
+                timeDescription.textContent =
+                    "All future games";
+
+            }
+
+
+            const upcomingMatches =
+                filterByTime(filteredMatches, timeFilter);
+
+
+            if (upcomingMatches.length === 0) {
+
+                document.getElementById("matches").innerHTML =
+                    "<p>No matches found for this selection.</p>";
+
+            } else {
+
+                const html =
+                    renderMatches(upcomingMatches);
+
+                document.getElementById("matches").innerHTML =
+                    html;
+
+            }
+
         })
-        .flatMap(match => [match.home, match.away])
-        .filter(team => teamLogos[team]);
 
-    availableTeams = [...new Set(availableTeams)];
-}
-
-availableTeams.sort();
-
-teamFilter.innerHTML = '<option value="All">All Teams</option>';
-
-availableTeams.forEach(team => {
-    teamFilter.innerHTML += `<option value="${team}">${team}</option>`;
-});
-
-if (availableTeams.includes(selectedTeam)) {
-    teamFilter.value = selectedTeam;
-} else {
-    teamFilter.value = "All";
-}
-            
-if (selectedTeam !== "All") {
-    filteredMatches = filteredMatches.filter(match =>
-        match.home === selectedTeam ||
-        match.away === selectedTeam
-    );
-}
-             timeFilter = document.getElementById("timeFilter").value;
-
-           timeDescription = document.getElementById("timeDescription");
-
-if (timeFilter === "7") {
-    timeDescription.textContent = "Next 7 days";
-} else if (timeFilter === "30") {
-    timeDescription.textContent = "Next 30 days";
-} else {
-    timeDescription.textContent = "All future games";
-}
-
- upcomingMatches = filterByTime(filteredMatches, timeFilter);
-
-if (upcomingMatches.length === 0) {
-    document.getElementById("matches").innerHTML =
-        "<p>No matches found for this selection.</p>";
-} else {
-     html = renderMatches(upcomingMatches);
-
-    document.getElementById("matches").innerHTML = html;
-}
-        })
         .catch(error => {
 
             document.getElementById("matches").innerHTML =
@@ -216,70 +260,79 @@ if (upcomingMatches.length === 0) {
 }
 
 
-function parseCSV(data) {
+/*
+   CSV parser
 
-     rows = data.split("\n");
+   Handles:
+   - commas inside quoted fields
+   - quoted fields
+   - blank fields
+   - commas in venue names such as "Annapolis, MD"
+*/
 
-     matches = [];
-
-    rows.slice(1).forEach(row => {
-
-        c```js
 function parseCSV(data) {
 
     const rows = [];
-    let row = [];
-    let field = "";
+    let currentRow = [];
+    let currentField = "";
     let insideQuotes = false;
 
     for (let i = 0; i < data.length; i++) {
 
         const char = data[i];
-        const nextChar = data[i + 1];
 
-        if (char === '"' && insideQuotes && nextChar === '"') {
-            // Two quotes inside a quoted field = one quote
-            field += '"';
-            i++;
-        }
+        if (char === '"') {
 
-        else if (char === '"') {
-            // Start or end of a quoted field
-            insideQuotes = !insideQuotes;
-        }
+            if (insideQuotes && data[i + 1] === '"') {
 
-        else if (char === "," && !insideQuotes) {
-            // End of field
-            row.push(field);
-            field = "";
-        }
+                currentField += '"';
+                i++;
 
-        else if ((char === "\n" || char === "\r") && !insideQuotes) {
+            } else {
 
-            // End of row
-            if (char === "\r" && nextChar === "\n") {
+                insideQuotes = !insideQuotes;
+
+            }
+
+        } else if (char === "," && !insideQuotes) {
+
+            currentRow.push(currentField);
+            currentField = "";
+
+        } else if ((char === "\n" || char === "\r") && !insideQuotes) {
+
+            if (char === "\r" && data[i + 1] === "\n") {
                 i++;
             }
 
-            row.push(field);
-            rows.push(row);
+            currentRow.push(currentField);
 
-            row = [];
-            field = "";
+            rows.push(currentRow);
+
+            currentRow = [];
+            currentField = "";
+
+        } else {
+
+            currentField += char;
+
         }
 
-        else {
-            field += char;
-        }
     }
+
 
     // Add the final field/row
-    if (field !== "" || row.length > 0) {
-        row.push(field);
-        rows.push(row);
+
+    if (currentField !== "" || currentRow.length > 0) {
+
+        currentRow.push(currentField);
+        rows.push(currentRow);
+
     }
 
+
     const matches = [];
+
 
     rows.slice(1).forEach(columns => {
 
@@ -307,35 +360,6 @@ function parseCSV(data) {
 
     });
 
-    return matches;
-
-}
-```
-
-
-        if (columns.length > 12) {
-
-            matches.push({
-
-                date: columns[0].trim(),
-                time: columns[1].trim(),
-                competition: columns[2].trim(),
-                stage: columns[3].trim(),
-                gender: columns[4].trim(),
-                level: columns[5].trim(),
-                home: columns[6].trim(),
-                away: columns[7].trim(),
-                venue: columns[8].trim(),
-                broadcast: columns[9].trim(),
-                notes: columns[10].trim(),
-                status: columns[11].trim(),
-                include: columns[12].trim()
-
-            });
-
-        }
-
-    });
 
     return matches;
 
@@ -345,7 +369,9 @@ function parseCSV(data) {
 function filterByTime(matches, timeFilter) {
 
     const today = new Date();
+
     today.setHours(0, 0, 0, 0);
+
 
     if (timeFilter === "all") {
 
@@ -365,10 +391,13 @@ function filterByTime(matches, timeFilter) {
 
     }
 
+
     const days = Number(timeFilter);
 
-const endDate = new Date(today);
-endDate.setDate(today.getDate() + days - 1);
+    const endDate = new Date(today);
+
+    endDate.setDate(today.getDate() + days - 1);
+
 
     return matches.filter(match => {
 
@@ -380,7 +409,8 @@ endDate.setDate(today.getDate() + days - 1);
             parts[1]
         );
 
-        return matchDate >= today && matchDate <= endDate;
+        return matchDate >= today &&
+               matchDate <= endDate;
 
     });
 
@@ -391,14 +421,19 @@ function renderMatches(matches) {
 
     matches.sort((a, b) => {
 
-        const dateA = new Date(a.date + " " + a.time);
-        const dateB = new Date(b.date + " " + b.time);
+        const dateA =
+            new Date(a.date + " " + a.time);
+
+        const dateB =
+            new Date(b.date + " " + b.time);
 
         return dateA - dateB;
 
     });
 
+
     const grouped = {};
+
 
     matches.forEach(match => {
 
@@ -408,59 +443,88 @@ function renderMatches(matches) {
 
         }
 
+
         if (!grouped[match.date][match.competition]) {
 
             grouped[match.date][match.competition] = [];
 
         }
 
+
         grouped[match.date][match.competition].push(match);
 
     });
 
+
     let html = "";
+
 
     Object.keys(grouped).forEach(date => {
 
-        html += `<div class="date">${formatDate(date)}</div>`;
+        html +=
+            `<div class="date">${formatDate(date)}</div>`;
+
 
         Object.keys(grouped[date]).forEach(competition => {
 
-            html += `<div class="league">${competition}</div>`;
+            html +=
+                `<div class="league">${competition}</div>`;
+
 
             grouped[date][competition].forEach(match => {
 
                 html += `
+
                     <div class="match">
 
-                    <div class="gender">${match.gender}</div>
+                        <div class="gender">
+                            ${match.gender}
+                        </div>
 
-                    <div class="stage">${match.stage}</div>
-  
-                    <div class="time">${match.time}</div>
+                        <div class="stage">
+                            ${match.stage}
+                        </div>
 
-                   <div class="teams">
-    ${teamLogos[match.home]
-        ? `<img src="${teamLogos[match.home]}" class="team-logo">`
-        : ""}
-    ${match.home}
-    vs
-    ${match.away}
-    ${teamLogos[match.away]
-        ? `<img src="${teamLogos[match.away]}" class="team-logo">`
-        : ""}
-</div>
+                        <div class="time">
+                            ${match.time}
+                        </div>
 
-${match.status !== "Scheduled"
-    ? `<div class="status">${match.status}</div>`
-    : ""}
+                        <div class="teams">
+
+                            ${teamLogos[match.home]
+                                ? `<img src="${teamLogos[match.home]}" class="team-logo">`
+                                : ""}
+
+                            ${match.home}
+
+                            vs
+
+                            ${match.away}
+
+                            ${teamLogos[match.away]
+                                ? `<img src="${teamLogos[match.away]}" class="team-logo">`
+                                : ""}
+
+                        </div>
+
+
+                        ${match.status !== "Scheduled"
+                            ? `<div class="status">${match.status}</div>`
+                            : ""}
+
 
                         <div class="details">
+
                             ${match.venue}
-                            ${match.broadcast ? " | " + match.broadcast : ""}
+
+                            ${match.broadcast
+                                ? " | " + match.broadcast
+                                : ""}
+
                         </div>
 
                     </div>
+
                 `;
 
             });
@@ -468,6 +532,7 @@ ${match.status !== "Scheduled"
         });
 
     });
+
 
     return html;
 
@@ -478,16 +543,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     loadMatches();
 
+
     document
         .getElementById("competitionFilter")
         .addEventListener("change", loadMatches);
+
 
     document
         .getElementById("timeFilter")
         .addEventListener("change", loadMatches);
 
+
     document
-    .getElementById("teamFilter")
-    .addEventListener("change", loadMatches);
+        .getElementById("teamFilter")
+        .addEventListener("change", loadMatches);
 
 });
+```
