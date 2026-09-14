@@ -1,4 +1,3 @@
-```js
 const teamLogos = {
     "UMBC": "images/UMBC.png",
     "Mount St. Mary's": "images/mount-st-marys.png",
