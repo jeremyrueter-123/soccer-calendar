@@ -433,7 +433,16 @@ function renderMatches(matches) {
 
     const grouped = {};
 
+    const today = new Date();
+today.setHours(0, 0, 0, 0);
 
+const todayString =
+    today.getFullYear() + "-" +
+    String(today.getMonth() + 1).padStart(2, "0") + "-" +
+    String(today.getDate()).padStart(2, "0");
+
+    const today = new Date().toISOString().split("T")[0];
+    
     matches.forEach(match => {
 
         if (!grouped[match.date]) {
@@ -454,6 +463,13 @@ function renderMatches(matches) {
 
     });
 
+    if (!grouped[today]) {
+    grouped[today] = {};
+}
+
+    if (!grouped[todayString]) {
+    grouped[todayString] = {};
+}
 
     let html = "";
 
@@ -463,7 +479,11 @@ function renderMatches(matches) {
         html +=
             `<div class="date">${formatDate(date)}</div>`;
 
+if (Object.keys(grouped[date]).length === 0) {
 
+    html += `<div class="no-games">No games scheduled</div>`;
+
+}
         Object.keys(grouped[date]).forEach(competition => {
 
             html +=
