@@ -460,6 +460,10 @@ function renderMatches(matches) {
 
     });
 
+    if (!grouped[todayString]) {
+        grouped[todayString] = {};
+    }
+    
     let html = "";
 
 
