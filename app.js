@@ -461,14 +461,6 @@ const todayString =
 
     });
 
-    if (!grouped[today]) {
-    grouped[today] = {};
-}
-
-    if (!grouped[todayString]) {
-    grouped[todayString] = {};
-}
-
     let html = "";
 
 
