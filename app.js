@@ -432,14 +432,6 @@ function renderMatches(matches) {
 
 
     const grouped = {};
-
-    const today = new Date();
-today.setHours(0, 0, 0, 0);
-
-const todayString =
-    today.getFullYear() + "-" +
-    String(today.getMonth() + 1).padStart(2, "0") + "-" +
-    String(today.getDate()).padStart(2, "0");
     
     matches.forEach(match => {
 
