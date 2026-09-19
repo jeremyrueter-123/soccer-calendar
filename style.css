@@ -138,22 +138,23 @@ select {
         font-size: 18px;
     }
 
-    select {
+    .filters {
+        display: block;
+    }
+
+    .filters select {
         display: block;
         width: 100%;
-        max-width: 300px;
+        max-width: none;
+        box-sizing: border-box;
         margin-bottom: 12px;
     }
-    
+
     label {
         display: block;
         margin-bottom: 4px;
     }
-    
-    .filters {
-        display: block;
-    }
-    
+
     .match {
         padding: 10px;
     }
@@ -162,7 +163,6 @@ select {
         font-size: 16px;
     }
 }
-
 .team-logo {
     width: 28px;
     height: 28px;
