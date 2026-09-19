@@ -159,9 +159,26 @@ select {
         padding: 10px;
     }
 
-    .teams {
-        font-size: 16px;
+    .time {
+        font-size: 15px;
     }
+
+    .teams {
+        font-size: 18px;
+    }
+
+    .details {
+        font-size: 15px;
+    }
+
+    .gender {
+        font-size: 15px;
+    }
+
+    .status {
+        font-size: 14px;
+    }
+    
 }
 .team-logo {
     width: 28px;
