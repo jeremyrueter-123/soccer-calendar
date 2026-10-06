@@ -19,11 +19,17 @@ def _team_key(value: str | None) -> str:
     # Remove ranking prefixes such as "No. 9" or "RV".
     s = re.sub(r"^(?:no\.?\s*\d+|#\s*\d+|rv)\s+", "", s)
     # Remove state/location parentheticals commonly appended by athletic sites.
-    s = re.sub(r"\s*\((?:md|pa|va|dc|nj|ny|de|ma|ct|ri|nc|sc|wv|oh|ohio|\w{2})\.?\)\s*$", "", s)
-    # Remove common academic/legal suffixes that do not distinguish the team.
+    s = re.sub(
+        r"\s*\((?:md|pa|va|dc|nj|ny|de|ma|ct|ri|nc|sc|wv|oh|ohio|mi|il|in|wi|mn|ky|tn|al|ga|tx|ca|calif|colo|ore|wash|az|ariz)\.?\)\s*$",
+        "",
+        s,
+    )
+    # Normalize common abbreviations before punctuation cleanup.
+    s = re.sub(r"\buniv\.?\b", "university", s)
+    s = re.sub(r"\bu\.?\b", "university", s)
+    s = re.sub(r"\bcol\.?\b", "college", s)
+    # Remove common academic suffixes that do not distinguish the team.
     s = re.sub(r"\s+(?:university|college|school)$", "", s)
-    s = re.sub(r"\s+university\s*$", "", s)
-    s = re.sub(r"\s+of\s+maryland\s+university$", "", s)
     # Normalize punctuation before alias lookup.
     s = re.sub(r"[^a-z0-9 ]+", "", s)
     s = re.sub(r"\s+", " ", s).strip()
@@ -40,21 +46,11 @@ def norm_team(value: str | None) -> str:
     if key in TEAM_ALIASES:
         return TEAM_ALIASES[key]
 
-    # A few common naming patterns across NCAA athletic sites.
+    # Common "University of ..." pattern.
     if key.startswith("university of "):
         shortened = key[len("university of "):]
         if shortened in TEAM_ALIASES:
             return TEAM_ALIASES[shortened]
-        key = shortened
-
-    if key.endswith(" university"):
-        key = key[:-11].strip()
-    if key.endswith(" college"):
-        key = key[:-8].strip()
-
-    # Re-check after generic cleanup.
-    if key in TEAM_ALIASES:
-        return TEAM_ALIASES[key]
 
     return raw
 
@@ -63,8 +59,12 @@ def norm_time(value: str | None) -> str | None:
     s = clean(value).lower().replace(".", "")
     if not s or s in {"tba", "tbd", "-", "—", "n/a"}:
         return None
+    if s == "noon":
+        return "12:00"
+    if s == "midnight":
+        return "00:00"
     s = re.sub(r"\s+et$", "", s)
-    m = re.match(r"^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$", s)
+    m = re.match(r"^(\d{1,2})(?::(\d{2})(?::\d{2})?)?\s*(am|pm)?$", s)
     if not m:
         return s
     h = int(m.group(1))

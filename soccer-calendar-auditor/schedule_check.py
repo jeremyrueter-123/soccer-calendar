@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 from calendar_loader import load_calendar
-from compare import compare_team
+from compare import compare_team, dedupe
 from config import CALENDAR_CSV_URL, SOURCES
 from parser import parse_source
 from report import write_report
@@ -42,6 +42,8 @@ def main():
         findings.extend(team_findings)
         if not team_findings:
             verified.append(f"{source['team']} ({source['gender']})")
+
+    findings = dedupe(findings)
 
     report_path = Path(args.report)
     write_report(findings, source_issues, report_path)

@@ -97,6 +97,18 @@ def _extract_tables(soup, source_team: str, gender: str, url: str, year: int) ->
             if not d or not opponent:
                 continue
 
+            # These are schedule placeholders or exhibitions that are not part
+            # of the calendar's regular-game dataset.
+            low_opponent = opponent.lower()
+            if "scrimmage" in low_opponent:
+                continue
+            if any(token in low_opponent for token in (
+                "first round", "second round", "third round",
+                "quarterfinal", "semifinal", "championship",
+                "play-in", "tournament",
+            )):
+                continue
+
             time = norm_time(_cell(cells, time_i))
             at_value = _cell(cells, at_i).lower()
             # Sidearm's "At" column is normally Home/Away.
