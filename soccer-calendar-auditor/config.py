@@ -9,22 +9,44 @@ CALENDAR_CSV_URL = (
 # First-wave schools. Add additional official sources only after their parser
 # output has been spot-checked.
 SOURCES = [
-    {"team": "Navy", "gender": "Men", "url": "https://navysports.com/sports/mens-soccer/schedule/2026"},
+    # NCAA Division I
+    {"team": "Maryland", "gender": "Men", "url": "https://umterps.com/sports/mens-soccer/schedule/2026"},
+    {"team": "Maryland", "gender": "Women", "url": "https://umterps.com/sports/womens-soccer/schedule/2026"},
     {"team": "UMBC", "gender": "Men", "url": "https://umbcretrievers.com/sports/mens-soccer/schedule/2026"},
-    {"team": "Johns Hopkins", "gender": "Men", "url": "https://hopkinssports.com/sports/mens-soccer/schedule/2026"},
-    {"team": "Washington College", "gender": "Men", "url": "https://washcollsports.com/sports/mens-soccer/schedule/2026"},
-    {"team": "Salisbury", "gender": "Men", "url": "https://suseagulls.com/sports/mens-soccer/schedule/2026"},
-    {"team": "Stevenson", "gender": "Men", "url": "https://gomustangsports.com/sports/mens-soccer/schedule/2026"},
-    {"team": "McDaniel", "gender": "Men", "url": "https://mcdanielathletics.com/sports/mens-soccer/schedule/2026"},
-    {"team": "Hood", "gender": "Men", "url": "https://hoodcollegeblazers.com/sports/mens-soccer/schedule/2026"},
-    {"team": "Notre Dame (MD)", "gender": "Men", "url": "https://notredamegators.com/sports/mens-soccer/schedule/2026"},
-    {"team": "Mount St. Mary's", "gender": "Men", "url": "https://mountathletics.com/sports/mens-soccer/schedule/2026"},
-    {"team": "Catholic", "gender": "Men", "url": "https://catholicathletics.com/sports/mens-soccer/schedule/2026"},
     {"team": "UMBC", "gender": "Women", "url": "https://umbcretrievers.com/sports/womens-soccer/schedule/2026"},
-    {"team": "Notre Dame (MD)", "gender": "Women", "url": "https://notredamegators.com/sports/womens-soccer/schedule/2026"},
+    {"team": "Mount St. Mary's", "gender": "Men", "url": "https://mountathletics.com/sports/mens-soccer/schedule/2026"},
     {"team": "Mount St. Mary's", "gender": "Women", "url": "https://mountathletics.com/sports/womens-soccer/schedule/2026"},
+    {"team": "Loyola", "gender": "Men", "url": "https://loyolagreyhounds.com/sports/mens-soccer/schedule/2026"},
+    {"team": "Loyola", "gender": "Women", "url": "https://loyolagreyhounds.com/sports/womens-soccer/schedule/2026"},
+    {"team": "Navy", "gender": "Men", "url": "https://navysports.com/sports/mens-soccer/schedule/2026"},
+    {"team": "Navy", "gender": "Women", "url": "https://navysports.com/sports/womens-soccer/schedule/2026"},
+    {"team": "Towson", "gender": "Women", "url": "https://towsontigers.com/sports/womens-soccer/schedule/2026"},
+
+    # NCAA Division II
+    {"team": "Frostburg State", "gender": "Men", "url": "https://frostburgsports.com/sports/mens-soccer/schedule/2026"},
+    {"team": "Frostburg State", "gender": "Women", "url": "https://frostburgsports.com/sports/womens-soccer/schedule/2026"},
+
+    # NCAA Division III
+    {"team": "Johns Hopkins", "gender": "Men", "url": "https://hopkinssports.com/sports/mens-soccer/schedule/2026"},
+    {"team": "Johns Hopkins", "gender": "Women", "url": "https://hopkinssports.com/sports/womens-soccer/schedule/2026"},
+    {"team": "McDaniel", "gender": "Men", "url": "https://mcdanielathletics.com/sports/mens-soccer/schedule/2026"},
+    {"team": "McDaniel", "gender": "Women", "url": "https://mcdanielathletics.com/sports/womens-soccer/schedule/2026"},
+    {"team": "Washington College", "gender": "Men", "url": "https://washcollsports.com/sports/mens-soccer/schedule/2026"},
     {"team": "Washington College", "gender": "Women", "url": "https://washcollsports.com/sports/womens-soccer/schedule/2026"},
+    {"team": "Salisbury", "gender": "Men", "url": "https://suseagulls.com/sports/mens-soccer/schedule/2026"},
+    {"team": "Salisbury", "gender": "Women", "url": "https://suseagulls.com/sports/womens-soccer/schedule/2026"},
+    {"team": "Goucher", "gender": "Men", "url": "https://goucherathletics.com/sports/mens-soccer/schedule/2026"},
+    {"team": "Goucher", "gender": "Women", "url": "https://goucherathletics.com/sports/womens-soccer/schedule/2026"},
+    {"team": "Hood", "gender": "Men", "url": "https://hoodathletics.com/sports/mens-soccer/schedule/2026"},
+    {"team": "Hood", "gender": "Women", "url": "https://hoodathletics.com/sports/womens-soccer/schedule/2026"},
+    {"team": "Stevenson", "gender": "Men", "url": "https://gomustangsports.com/sports/mens-soccer/schedule/2026"},
+    {"team": "Stevenson", "gender": "Women", "url": "https://gomustangsports.com/sports/womens-soccer/schedule/2026"},
+    {"team": "Notre Dame (MD)", "gender": "Men", "url": "https://notredamegators.com/sports/mens-soccer/schedule/2026"},
+    {"team": "Notre Dame (MD)", "gender": "Women", "url": "https://notredamegators.com/sports/womens-soccer/schedule/2026"},
+    {"team": "St. Mary's", "gender": "Men", "url": "https://smcmathletics.com/sports/mens-soccer/schedule/2026"},
+    {"team": "St. Mary's", "gender": "Women", "url": "https://smcmathletics.com/sports/womens-soccer/schedule/2026"},
 ]
+
 
 TEAM_ALIASES = {
     "maryland": "Maryland",
