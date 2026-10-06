@@ -47,14 +47,17 @@ For historical games, the audit intentionally avoids noisy kickoff-time and home
 
 Historical unmatched games are **Review** items. Upcoming unmatched games are **Action Needed** items.
 
-## v7 normalization improvements
+## v8 improvements
 
 - Treats `-`, `—`, and similar pre-result markers as `Scheduled`.
 - Handles common `University` / `College` suffixes without confusing distinct teams.
 - Handles common state suffixes such as `(Md.)`, `(Va.)`, and `(Pa.)`.
 - Handles common opponent abbreviations including FDU/Fairleigh Dickinson and Army/Army West Point.
 - Keeps common team identities such as Washington College, St. John's, and Mount St. Mary's intact.
-- Explicitly detects duplicate calendar rows for the same date/opponent.
+- Explicitly detects duplicate calendar rows for the same gender, date, and opponent pair.
+- Includes gender in the audit tables so simultaneous men's and women's matches are not mistaken for duplicates.
+- Cleans report names such as `st mary s`, `notre dame`, and lowercase opponent names without changing match identity.
+- Preserves home/away discrepancies as actionable findings; the official schedule remains the comparison authority.
 
 ## Important source limitation
 

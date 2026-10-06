@@ -119,3 +119,18 @@ def parse_date(value: str, year: int) -> date | None:
             except ValueError:
                 pass
     return None
+
+
+def display_team(value: str | None) -> str:
+    """Return a clean human-readable team name for audit reports."""
+    raw = clean(value)
+    if not raw:
+        return ""
+    canonical = norm_team(raw)
+    # norm_team preserves unknown names; make those readable without
+    # attempting to invent a new canonical identity.
+    if canonical == raw:
+        words = canonical.split()
+        acronyms = {"nc": "NC", "pa": "PA", "va": "VA", "md": "MD", "dc": "DC", "fdu": "FDU", "umass": "UMass"}
+        return " ".join(acronyms.get(w.lower(), w.capitalize()) for w in words)
+    return canonical
