@@ -20,3 +20,13 @@ def test_grid_url():
 
 def test_parse_date():
     assert parse_date("Oct 24", 2026).isoformat() == "2026-10-24"
+
+
+def test_team_name_normalization_sidearm_variants():
+    from normalize import norm_team
+    assert norm_team("Mount St. Mary's (Md.)") == "Mount St. Mary's"
+    assert norm_team("UMBC") == "UMBC"
+    assert norm_team("University of Maryland Baltimore County") == "UMBC"
+    assert norm_team("St. John's University") == "St. John's"
+    assert norm_team("No. 9 Catholic University") == "Catholic"
+    assert norm_team("York College of Pennsylvania") == "York (PA)"

@@ -8,14 +8,55 @@ from config import STATUS_ALIASES, TEAM_ALIASES
 
 
 def clean(value: str | None) -> str:
-    return re.sub(r"\s+", " ", (value or "").replace("\xa0", " ")).strip()
+    s = (value or "").replace("\xa0", " ")
+    # Sidearm frequently uses asterisks as footnote/ranking markers.
+    s = s.replace("*", " ")
+    return re.sub(r"\s+", " ", s).strip()
+
+
+def _team_key(value: str | None) -> str:
+    s = clean(value).lower()
+    # Remove ranking prefixes such as "No. 9" or "RV".
+    s = re.sub(r"^(?:no\.?\s*\d+|#\s*\d+|rv)\s+", "", s)
+    # Remove state/location parentheticals commonly appended by athletic sites.
+    s = re.sub(r"\s*\((?:md|pa|va|dc|nj|ny|de|ma|ct|ri|nc|sc|wv|oh|ohio|\w{2})\.?\)\s*$", "", s)
+    # Remove common academic/legal suffixes that do not distinguish the team.
+    s = re.sub(r"\s+(?:university|college|school)$", "", s)
+    s = re.sub(r"\s+university\s*$", "", s)
+    s = re.sub(r"\s+of\s+maryland\s+university$", "", s)
+    # Normalize punctuation before alias lookup.
+    s = re.sub(r"[^a-z0-9 ]+", "", s)
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
 
 
 def norm_team(value: str | None) -> str:
     raw = clean(value)
-    key = re.sub(r"[^a-z0-9 ]+", "", raw.lower())
-    key = re.sub(r"\s+", " ", key).strip()
-    return TEAM_ALIASES.get(key, raw)
+    key = _team_key(raw)
+    if not key:
+        return ""
+
+    # Exact configured aliases first.
+    if key in TEAM_ALIASES:
+        return TEAM_ALIASES[key]
+
+    # A few common naming patterns across NCAA athletic sites.
+    if key.startswith("university of "):
+        shortened = key[len("university of "):]
+        if shortened in TEAM_ALIASES:
+            return TEAM_ALIASES[shortened]
+        key = shortened
+
+    if key.endswith(" university"):
+        key = key[:-11].strip()
+    if key.endswith(" college"):
+        key = key[:-8].strip()
+
+    # Re-check after generic cleanup.
+    if key in TEAM_ALIASES:
+        return TEAM_ALIASES[key]
+
+    return raw
 
 
 def norm_time(value: str | None) -> str | None:
@@ -63,7 +104,6 @@ def parse_date(value: str, year: int) -> date | None:
         except ValueError:
             pass
 
-    # Sidearm often gives strings such as "Aug 20 (Thu)" or "Oct 24".
     m = re.match(r"^([A-Za-z]+)\s+(\d{1,2})", s)
     if m:
         for fmt in ("%b %d", "%B %d"):
