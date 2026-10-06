@@ -1,115 +1,99 @@
-"""Normalization helpers shared by calendar and official parsers."""
-from __future__ import annotations
-
 import re
-from datetime import date, datetime
+from config import TEAM_ALIASES, STATUS_ALIASES
 
-from config import STATUS_ALIASES, TEAM_ALIASES
+def clean(value):
+    return re.sub(r"\s+", " ", (value or "").replace("\xa0", " ")).strip()
 
-
-def clean(value: str | None) -> str:
-    s = (value or "").replace("\xa0", " ")
-    # Sidearm frequently uses asterisks as footnote/ranking markers.
-    s = s.replace("*", " ")
-    return re.sub(r"\s+", " ", s).strip()
-
-
-def _team_key(value: str | None) -> str:
-    s = clean(value).lower()
-    # Remove ranking prefixes such as "No. 9" or "RV".
-    s = re.sub(r"^(?:no\.?\s*\d+|#\s*\d+|rv)\s+", "", s)
-    # Remove state/location parentheticals commonly appended by athletic sites.
-    s = re.sub(
-        r"\s*\((?:md|pa|va|dc|nj|ny|de|ma|ct|ri|nc|sc|wv|oh|ohio|mi|il|in|wi|mn|ky|tn|al|ga|tx|ca|calif|colo|ore|wash|az|ariz)\.?\)\s*$",
-        "",
-        s,
-    )
-    # Normalize common abbreviations before punctuation cleanup.
-    s = re.sub(r"\buniv\.?\b", "university", s)
-    s = re.sub(r"\bu\.?\b", "university", s)
-    s = re.sub(r"\bcol\.?\b", "college", s)
-    # Remove common academic suffixes that do not distinguish the team.
-    s = re.sub(r"\s+(?:university|college|school)$", "", s)
-    # Normalize punctuation before alias lookup.
-    s = re.sub(r"[^a-z0-9 ]+", "", s)
-    s = re.sub(r"\s+", " ", s).strip()
-    return s
-
-
-def norm_team(value: str | None) -> str:
+def norm_team(value):
     raw = clean(value)
-    key = _team_key(raw)
-    if not key:
+    if not raw:
         return ""
+    # Remove rankings, footnote markers and common schedule decorations.
+    raw = re.sub(r"^\s*(?:No\.\s*)?\d{1,2}\s*[\.\)]?\s*", "", raw, flags=re.I)
+    raw = re.sub(r"[\*\u2020\u2021]+", " ", raw)
+    raw = re.sub(r"\s+", " ", raw).strip()
 
-    # Exact configured aliases first.
+    key = re.sub(r"[^a-z0-9]+", " ", raw.lower()).strip()
+    key = re.sub(r"\s+", " ", key)
+
+    # Exact project aliases get first priority. This matters for names such as
+    # Washington College, where "College" is part of the identity.
     if key in TEAM_ALIASES:
         return TEAM_ALIASES[key]
 
-    # Common "University of ..." pattern.
-    if key.startswith("university of "):
-        shortened = key[len("university of "):]
-        if shortened in TEAM_ALIASES:
-            return TEAM_ALIASES[shortened]
+    # Common institutional suffixes that do not identify a different opponent.
+    key = re.sub(r"\b(university|college)\b", "", key)
+    key = re.sub(r"\s+", " ", key).strip()
 
-    return raw
+    # Common abbreviations / geographic qualifiers.
+    replacements = {
+        "fdu": "fdu",
+        "fdu florham": "fdu",
+        "fdu madison": "fdu",
+        "fairleigh dickinson": "fdu",
+        "fairleigh dickinson university": "fairleigh dickinson",
+        "penn st": "penn state",
+        "psu": "penn state",
+        "washington md": "washington",
+        "washington college md": "washington college",
+        "st marys md": "st marys",
+        "st marys college of maryland": "st marys",
+        "saint marys college of maryland": "st marys",
+        "mount saint mary": "mount st marys",
+        "mount saint marys": "mount st marys",
+        "mount st mary": "mount st marys",
+        "mount st marys md": "mount st marys",
+        "notre dame of maryland": "notre dame md",
+        "notre dame md": "notre dame md",
+        "army west point": "army",
+        "army west point academy": "army",
+        "james madison university": "james madison",
+        "jmu": "james madison",
+        "nc wesleyan": "north carolina wesleyan",
+        "north carolina wesleyan university": "north carolina wesleyan",
+        "alvernia": "alvernia",
+        "bryn mawr": "bryn mawr",
+        "hartwick": "hartwick",
+        "king s": "kings",
+        "kings college pa": "kings",
+        "king s college pa": "kings",
+        "kings college of pennsylvania": "kings",
+        "gettysburg": "gettysburg",
+        "bridgewater va": "bridgewater",
+        "wilson college": "wilson",
+        "wilson": "wilson",
+        "dickinson college": "dickinson",
+        "dickinson": "dickinson",
+    }
+    key = replacements.get(key, key)
 
+    # Project-wide aliases.
+    if key in TEAM_ALIASES:
+        return TEAM_ALIASES[key]
+    return key
 
-def norm_time(value: str | None) -> str | None:
-    s = clean(value).lower().replace(".", "")
-    if not s or s in {"tba", "tbd", "-", "—", "n/a"}:
+def norm_time(value):
+    raw = clean(value).lower().replace(".", "")
+    if raw in {"", "-", "tba", "tb a", "time tba", "tbd", "time tbd"}:
         return None
-    if s == "noon":
-        return "12:00"
-    if s == "midnight":
-        return "00:00"
-    s = re.sub(r"\s+et$", "", s)
-    m = re.match(r"^(\d{1,2})(?::(\d{2})(?::\d{2})?)?\s*(am|pm)?$", s)
+    raw = raw.replace("noon", "12:00 pm").replace("midnight", "12:00 am")
+    raw = re.sub(r"\s+", " ", raw)
+    m = re.match(r"^(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$", raw)
     if not m:
-        return s
-    h = int(m.group(1))
+        return clean(value)
+    hour = int(m.group(1))
     minute = int(m.group(2) or 0)
     ap = m.group(3)
-    if ap == "pm" and h != 12:
-        h += 12
-    if ap == "am" and h == 12:
-        h = 0
-    return f"{h:02d}:{minute:02d}"
+    if ap:
+        if ap == "pm" and hour != 12:
+            hour += 12
+        if ap == "am" and hour == 12:
+            hour = 0
+    return f"{hour:02d}:{minute:02d}"
 
-
-def norm_status(value: str | None) -> str:
-    s = clean(value)
-    if not s:
+def norm_status(value):
+    raw = clean(value).lower()
+    if raw in {"", "-", "—", "–", "scheduled", "upcoming", "not started", "preview"}:
         return "Scheduled"
-    low = s.lower()
-    return STATUS_ALIASES.get(low, s)
-
-
-def parse_date(value: str, year: int) -> date | None:
-    s = clean(value)
-    if not s:
-        return None
-
-    formats = [
-        "%Y-%m-%d",
-        "%B %d, %Y", "%b %d, %Y",
-        "%m/%d/%Y", "%m/%d/%y",
-    ]
-    for fmt in formats:
-        try:
-            d = datetime.strptime(s, fmt).date()
-            if "%Y" not in fmt and "%y" not in fmt:
-                d = d.replace(year=year)
-            return d
-        except ValueError:
-            pass
-
-    m = re.match(r"^([A-Za-z]+)\s+(\d{1,2})", s)
-    if m:
-        for fmt in ("%b %d", "%B %d"):
-            try:
-                d = datetime.strptime(f"{year} {m.group(1)} {m.group(2)}", f"%Y {fmt}").date()
-                return d
-            except ValueError:
-                pass
-    return None
+    key = re.sub(r"[^a-z]+", " ", raw).strip()
+    return STATUS_ALIASES.get(key, clean(value))

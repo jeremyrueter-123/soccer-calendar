@@ -1,178 +1,106 @@
-"""Review-only comparison engine."""
-from __future__ import annotations
-
-from datetime import date
-
+from datetime import timedelta
+from dataclasses import dataclass
+from normalize import norm_team, norm_time, norm_status
 from models import Match
-from normalize import norm_team, norm_time
 
+@dataclass
+class Finding:
+    severity: str
+    team: str
+    calendar: Match | None
+    official: Match | None
+    issue: str
 
-def _opponent(m: Match, team: str) -> str:
-    return norm_team(m.away) if norm_team(m.home) == team else norm_team(m.home)
+def _opp(m, team):
+    return norm_team(m.away if norm_team(m.home) == norm_team(team) else m.home)
 
+def _same_pair(a, b, team):
+    return _opp(a, team) == _opp(b, team)
 
-def _same_identity(a: Match, b: Match, team: str) -> bool:
-    return _opponent(a, team) == _opponent(b, team)
-
-
-def _finding(kind, team, calendar=None, official=None, detail=""):
-    return {
-        "kind": kind,
-        "team": team,
-        "calendar": calendar,
-        "official": official,
-        "detail": detail,
-    }
-
-
-def _is_upcoming(match: Match, as_of: date) -> bool:
-    """Return True for games on or after the audit date."""
-    return match.date >= as_of
-
-
-def _compare_details(findings, team, c, o, *, upcoming: bool):
-    """Compare the fields we care about for a matched game.
-
-    Historical games are intentionally checked only for existence/date and status.
-    Kickoff time and home/away are operationally important for upcoming games,
-    but are noisy and generally immaterial once a game has already been played.
-    """
-    if upcoming:
-        if norm_time(c.time) != norm_time(o.time) and o.time is not None:
-            findings.append(_finding("TIME", team, c, o, "Kickoff time differs"))
-        if (norm_team(c.home), norm_team(c.away)) != (norm_team(o.home), norm_team(o.away)):
-            findings.append(_finding("HOME_AWAY", team, c, o, "Home/away designation differs"))
-
-    if c.status != o.status:
-        findings.append(_finding("STATUS", team, c, o, "Match status differs"))
-
-
-def compare_team(
-    calendar: list[Match],
-    official: list[Match],
-    team: str,
-    gender: str | None = None,
-    as_of: date | None = None,
-):
-    """Compare one team's calendar entries with its official schedule.
-
-    By default, the audit date is today. For games already in the past, the
-    auditor focuses on whether the game exists/date matches and whether its
-    status changed. For upcoming games it also checks kickoff time and
-    home/away designation.
-    """
-    as_of = as_of or date.today()
-    team = norm_team(team)
-    cal = [
-        m for m in calendar
-        if team in {norm_team(m.home), norm_team(m.away)}
-        and (gender is None or not m.gender or m.gender.lower() == gender.lower())
-    ]
-    off = [
-        m for m in official
-        if team in {norm_team(m.home), norm_team(m.away)}
-        and (gender is None or not m.gender or m.gender.lower() == gender.lower())
-    ]
-
-    used: set[int] = set()
-    findings = []
-
-    # Exact identity/date first.
-    for c in cal:
-        exact = [
-            (i, o) for i, o in enumerate(off)
-            if i not in used and o.date == c.date and _same_identity(c, o, team)
-        ]
-        if exact:
-            i, o = exact[0]
-            used.add(i)
-            _compare_details(
-                findings,
-                team,
-                c,
-                o,
-                upcoming=_is_upcoming(c, as_of),
-            )
-            continue
-
-        # Date-move match: same team/opponent within +/-14 days.
-        near = []
-        for i, o in enumerate(off):
-            if i in used or not _same_identity(c, o, team):
-                continue
-            delta = abs((c.date - o.date).days)
-            if delta <= 14:
-                near.append((delta, i, o))
-        if near:
-            delta, i, o = sorted(near)[0]
-            used.add(i)
-            findings.append(_finding("DATE", team, c, o, f"Date differs by {delta} day(s)"))
-            # For a moved game, use the calendar date to determine whether the
-            # operational details are still relevant. Upcoming games get the
-            # full comparison; past games only get status.
-            _compare_details(
-                findings,
-                team,
-                c,
-                o,
-                upcoming=_is_upcoming(c, as_of),
-            )
-        else:
-            findings.append(_finding("MISSING_OFFICIAL", team, c, None, "Calendar game not found on official schedule"))
-
-    # Official games not represented in the calendar.
-    for i, o in enumerate(off):
-        if i not in used:
-            findings.append(_finding("NEW_OFFICIAL", team, None, o, "Official schedule has an unmatched game"))
-
-    return findings
-
-
-def severity(kind: str, calendar: Match | None, official: Match | None) -> str:
-    if kind in {"DATE", "TIME", "HOME_AWAY", "STATUS", "DUPLICATE_CALENDAR"}:
-        return "RED"
-    if kind == "MISSING_OFFICIAL":
-        return "RED" if calendar and calendar.date >= date.today() else "YELLOW"
-    if kind == "NEW_OFFICIAL":
-        return "RED" if official and official.date >= date.today() else "YELLOW"
-    return "YELLOW"
-
-def find_calendar_duplicates(calendar: list[Match]):
-    """Find multiple calendar rows representing the same team/opponent/date."""
+def dedupe(matches):
+    """Collapse exact calendar duplicates, preserving the most informative time/status."""
     groups = {}
-    for m in calendar:
-        key = (
-            m.gender,
-            m.date,
-            frozenset((norm_team(m.home), norm_team(m.away))),
-        )
+    for m in matches:
+        key = (m.date, tuple(sorted((norm_team(m.home), norm_team(m.away)))),
+               m.gender, norm_status(m.status))
         groups.setdefault(key, []).append(m)
 
+    out = []
+    for group in groups.values():
+        if len(group) == 1:
+            out.append(group[0])
+            continue
+        # Prefer a concrete time over TBA.
+        chosen = next((m for m in group if norm_time(m.time)), group[0])
+        out.append(chosen)
+    return out
+
+def duplicate_findings(calendar):
     findings = []
-    for matches in groups.values():
-        if len(matches) > 1:
-            # One finding represents the duplicate set.
-            first = matches[0]
-            findings.append(_finding(
-                "DUPLICATE_CALENDAR",
-                first.source_team or norm_team(first.home),
-                first,
-                None,
-                f"Duplicate calendar entries found ({len(matches)} rows)",
+    seen = {}
+    for m in calendar:
+        key = (m.date, tuple(sorted((norm_team(m.home), norm_team(m.away)))), m.gender)
+        seen.setdefault(key, []).append(m)
+    for group in seen.values():
+        if len(group) > 1:
+            first = group[0]
+            times = ", ".join(norm_time(m.time) or "TBA" for m in group)
+            findings.append(Finding(
+                "RED", first.source_team, first, None,
+                f"Duplicate calendar entries ({times})"
             ))
     return findings
 
+def compare(calendar, official, team, today):
+    findings = []
+    cal = [m for m in calendar if m.source_team == team]
+    off = [m for m in official if m.source_team == team]
+    used = set()
 
-def dedupe(findings):
-    """Collapse team-side duplicates into one match-level finding."""
-    result = {}
-    for f in findings:
-        c, o = f["calendar"], f["official"]
-        if c:
-            key = ("calendar", c.gender, c.date, frozenset((c.home, c.away)), f["kind"])
-        elif o:
-            key = ("official", o.gender, o.date, frozenset((o.home, o.away)), f["kind"])
+    for cm in cal:
+        exact = next((i for i, om in enumerate(off)
+                      if i not in used and om.date == cm.date and _same_pair(cm, om, team)), None)
+        if exact is not None:
+            om = off[exact]; used.add(exact)
+
+            if cm.date != om.date:
+                continue
+
+            # Past matches: existence/status are important; time/home-away are not.
+            if cm.date < today:
+                if norm_status(cm.status) != norm_status(om.status):
+                    findings.append(Finding("RED", team, cm, om, "Match status differs"))
+                continue
+
+            if norm_time(cm.time) != norm_time(om.time):
+                # TBA -> a real time is a legitimate upcoming change.
+                if not (norm_time(cm.time) is None and norm_time(om.time) is None):
+                    findings.append(Finding("RED", team, cm, om, "Kickoff time differs"))
+
+            if norm_team(cm.home) != norm_team(om.home) or norm_team(cm.away) != norm_team(om.away):
+                findings.append(Finding("RED", team, cm, om, "Home/away designation differs"))
+
+            if norm_status(cm.status) != norm_status(om.status):
+                findings.append(Finding("RED", team, cm, om, "Match status differs"))
+            continue
+
+        # Look for a date move of the same opponent within +/- 14 days.
+        moved = next((om for i, om in enumerate(off) if i not in used and
+                      _same_pair(cm, om, team) and
+                      abs((om.date - cm.date).days) <= 14), None)
+        if moved:
+            idx = off.index(moved); used.add(idx)
+            sev = "RED" if cm.date >= today else "YELLOW"
+            findings.append(Finding(sev, team, cm, moved,
+                                    f"Date differs by {(moved.date - cm.date).days} day(s)"))
         else:
-            key = ("unknown", f["team"], f["kind"], f["detail"])
-        result[key] = f
-    return list(result.values())
+            sev = "RED" if cm.date >= today else "YELLOW"
+            findings.append(Finding(sev, team, cm, None, "Calendar game not found on official schedule"))
+
+    for i, om in enumerate(off):
+        if i in used:
+            continue
+        sev = "RED" if om.date >= today else "YELLOW"
+        findings.append(Finding(sev, team, None, om, "Official schedule has an unmatched game"))
+
+    return findings
