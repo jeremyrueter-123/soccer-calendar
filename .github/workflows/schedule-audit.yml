@@ -1,0 +1,38 @@
+name: Soccer Calendar Schedule Audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Maryland Calendar branch
+        uses: actions/checkout@v4
+        with:
+          ref: maryland-calendar
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: soccer-calendar-auditor
+        run: pip install -r requirements.txt
+
+      - name: Run schedule audit
+        working-directory: soccer-calendar-auditor
+        run: python schedule_check.py --report audit_report.md
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: soccer-calendar-audit
+          path: soccer-calendar-auditor/audit_report.md
