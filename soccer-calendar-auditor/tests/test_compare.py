@@ -46,3 +46,31 @@ def test_deduplicates_team_side_findings():
         {"kind":"TIME","team":"Ursinus","calendar":c,"official":o,"detail":"Kickoff time differs"},
     ]
     assert len(dedupe(f)) == 1
+
+
+def test_historical_time_change_is_ignored():
+    c = Match(date(2026, 9, 12), "14:00", "Hood", "Washington College", "Scheduled", "Women")
+    o = Match(date(2026, 9, 12), "13:00", "Hood", "Washington College", "Scheduled", "Women")
+    findings = compare_team([c], [o], "Washington College", "Women", as_of=date(2026, 10, 6))
+    assert not any(f["kind"] == "TIME" for f in findings)
+
+
+def test_historical_home_away_change_is_ignored():
+    c = Match(date(2026, 9, 12), "14:00", "Washington College", "Hood", "Scheduled", "Women")
+    o = Match(date(2026, 9, 12), "14:00", "Hood", "Washington College", "Scheduled", "Women")
+    findings = compare_team([c], [o], "Washington College", "Women", as_of=date(2026, 10, 6))
+    assert not any(f["kind"] == "HOME_AWAY" for f in findings)
+
+
+def test_upcoming_time_change_is_still_detected():
+    c = Match(date(2026, 10, 24), "19:00", "Ursinus", "Washington College", "Scheduled", "Men")
+    o = Match(date(2026, 10, 24), "12:00", "Ursinus", "Washington College", "Scheduled", "Men")
+    findings = compare_team([c], [o], "Washington College", "Men", as_of=date(2026, 10, 6))
+    assert any(f["kind"] == "TIME" for f in findings)
+
+
+def test_upcoming_home_away_change_is_still_detected():
+    c = Match(date(2026, 10, 24), "12:00", "Washington College", "Ursinus", "Scheduled", "Men")
+    o = Match(date(2026, 10, 24), "12:00", "Ursinus", "Washington College", "Scheduled", "Men")
+    findings = compare_team([c], [o], "Washington College", "Men", as_of=date(2026, 10, 6))
+    assert any(f["kind"] == "HOME_AWAY" for f in findings)

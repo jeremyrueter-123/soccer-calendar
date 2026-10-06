@@ -25,7 +25,43 @@ def _finding(kind, team, calendar=None, official=None, detail=""):
     }
 
 
-def compare_team(calendar: list[Match], official: list[Match], team: str, gender: str | None = None):
+def _is_upcoming(match: Match, as_of: date) -> bool:
+    """Return True for games on or after the audit date."""
+    return match.date >= as_of
+
+
+def _compare_details(findings, team, c, o, *, upcoming: bool):
+    """Compare the fields we care about for a matched game.
+
+    Historical games are intentionally checked only for existence/date and status.
+    Kickoff time and home/away are operationally important for upcoming games,
+    but are noisy and generally immaterial once a game has already been played.
+    """
+    if upcoming:
+        if norm_time(c.time) != norm_time(o.time) and o.time is not None:
+            findings.append(_finding("TIME", team, c, o, "Kickoff time differs"))
+        if (norm_team(c.home), norm_team(c.away)) != (norm_team(o.home), norm_team(o.away)):
+            findings.append(_finding("HOME_AWAY", team, c, o, "Home/away designation differs"))
+
+    if c.status != o.status:
+        findings.append(_finding("STATUS", team, c, o, "Match status differs"))
+
+
+def compare_team(
+    calendar: list[Match],
+    official: list[Match],
+    team: str,
+    gender: str | None = None,
+    as_of: date | None = None,
+):
+    """Compare one team's calendar entries with its official schedule.
+
+    By default, the audit date is today. For games already in the past, the
+    auditor focuses on whether the game exists/date matches and whether its
+    status changed. For upcoming games it also checks kickoff time and
+    home/away designation.
+    """
+    as_of = as_of or date.today()
     team = norm_team(team)
     cal = [
         m for m in calendar
@@ -50,12 +86,13 @@ def compare_team(calendar: list[Match], official: list[Match], team: str, gender
         if exact:
             i, o = exact[0]
             used.add(i)
-            if norm_time(c.time) != norm_time(o.time) and o.time is not None:
-                findings.append(_finding("TIME", team, c, o, "Kickoff time differs"))
-            if (norm_team(c.home), norm_team(c.away)) != (norm_team(o.home), norm_team(o.away)):
-                findings.append(_finding("HOME_AWAY", team, c, o, "Home/away designation differs"))
-            if c.status != o.status:
-                findings.append(_finding("STATUS", team, c, o, "Match status differs"))
+            _compare_details(
+                findings,
+                team,
+                c,
+                o,
+                upcoming=_is_upcoming(c, as_of),
+            )
             continue
 
         # Date-move match: same team/opponent within +/-14 days.
@@ -70,12 +107,16 @@ def compare_team(calendar: list[Match], official: list[Match], team: str, gender
             delta, i, o = sorted(near)[0]
             used.add(i)
             findings.append(_finding("DATE", team, c, o, f"Date differs by {delta} day(s)"))
-            if norm_time(c.time) != norm_time(o.time) and o.time is not None:
-                findings.append(_finding("TIME", team, c, o, "Kickoff time differs"))
-            if (norm_team(c.home), norm_team(c.away)) != (norm_team(o.home), norm_team(o.away)):
-                findings.append(_finding("HOME_AWAY", team, c, o, "Home/away designation differs"))
-            if c.status != o.status:
-                findings.append(_finding("STATUS", team, c, o, "Match status differs"))
+            # For a moved game, use the calendar date to determine whether the
+            # operational details are still relevant. Upcoming games get the
+            # full comparison; past games only get status.
+            _compare_details(
+                findings,
+                team,
+                c,
+                o,
+                upcoming=_is_upcoming(c, as_of),
+            )
         else:
             findings.append(_finding("MISSING_OFFICIAL", team, c, None, "Calendar game not found on official schedule"))
 
