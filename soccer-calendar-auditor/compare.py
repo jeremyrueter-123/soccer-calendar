@@ -1,0 +1,178 @@
+"""Review-only comparison engine."""
+from __future__ import annotations
+
+from datetime import date
+
+from models import Match
+from normalize import norm_team, norm_time
+
+
+def _opponent(m: Match, team: str) -> str:
+    return norm_team(m.away) if norm_team(m.home) == team else norm_team(m.home)
+
+
+def _same_identity(a: Match, b: Match, team: str) -> bool:
+    return _opponent(a, team) == _opponent(b, team)
+
+
+def _finding(kind, team, calendar=None, official=None, detail=""):
+    return {
+        "kind": kind,
+        "team": team,
+        "calendar": calendar,
+        "official": official,
+        "detail": detail,
+    }
+
+
+def _is_upcoming(match: Match, as_of: date) -> bool:
+    """Return True for games on or after the audit date."""
+    return match.date >= as_of
+
+
+def _compare_details(findings, team, c, o, *, upcoming: bool):
+    """Compare the fields we care about for a matched game.
+
+    Historical games are intentionally checked only for existence/date and status.
+    Kickoff time and home/away are operationally important for upcoming games,
+    but are noisy and generally immaterial once a game has already been played.
+    """
+    if upcoming:
+        if norm_time(c.time) != norm_time(o.time) and o.time is not None:
+            findings.append(_finding("TIME", team, c, o, "Kickoff time differs"))
+        if (norm_team(c.home), norm_team(c.away)) != (norm_team(o.home), norm_team(o.away)):
+            findings.append(_finding("HOME_AWAY", team, c, o, "Home/away designation differs"))
+
+    if c.status != o.status:
+        findings.append(_finding("STATUS", team, c, o, "Match status differs"))
+
+
+def compare_team(
+    calendar: list[Match],
+    official: list[Match],
+    team: str,
+    gender: str | None = None,
+    as_of: date | None = None,
+):
+    """Compare one team's calendar entries with its official schedule.
+
+    By default, the audit date is today. For games already in the past, the
+    auditor focuses on whether the game exists/date matches and whether its
+    status changed. For upcoming games it also checks kickoff time and
+    home/away designation.
+    """
+    as_of = as_of or date.today()
+    team = norm_team(team)
+    cal = [
+        m for m in calendar
+        if team in {norm_team(m.home), norm_team(m.away)}
+        and (gender is None or not m.gender or m.gender.lower() == gender.lower())
+    ]
+    off = [
+        m for m in official
+        if team in {norm_team(m.home), norm_team(m.away)}
+        and (gender is None or not m.gender or m.gender.lower() == gender.lower())
+    ]
+
+    used: set[int] = set()
+    findings = []
+
+    # Exact identity/date first.
+    for c in cal:
+        exact = [
+            (i, o) for i, o in enumerate(off)
+            if i not in used and o.date == c.date and _same_identity(c, o, team)
+        ]
+        if exact:
+            i, o = exact[0]
+            used.add(i)
+            _compare_details(
+                findings,
+                team,
+                c,
+                o,
+                upcoming=_is_upcoming(c, as_of),
+            )
+            continue
+
+        # Date-move match: same team/opponent within +/-14 days.
+        near = []
+        for i, o in enumerate(off):
+            if i in used or not _same_identity(c, o, team):
+                continue
+            delta = abs((c.date - o.date).days)
+            if delta <= 14:
+                near.append((delta, i, o))
+        if near:
+            delta, i, o = sorted(near)[0]
+            used.add(i)
+            findings.append(_finding("DATE", team, c, o, f"Date differs by {delta} day(s)"))
+            # For a moved game, use the calendar date to determine whether the
+            # operational details are still relevant. Upcoming games get the
+            # full comparison; past games only get status.
+            _compare_details(
+                findings,
+                team,
+                c,
+                o,
+                upcoming=_is_upcoming(c, as_of),
+            )
+        else:
+            findings.append(_finding("MISSING_OFFICIAL", team, c, None, "Calendar game not found on official schedule"))
+
+    # Official games not represented in the calendar.
+    for i, o in enumerate(off):
+        if i not in used:
+            findings.append(_finding("NEW_OFFICIAL", team, None, o, "Official schedule has an unmatched game"))
+
+    return findings
+
+
+def severity(kind: str, calendar: Match | None, official: Match | None) -> str:
+    if kind in {"DATE", "TIME", "HOME_AWAY", "STATUS", "DUPLICATE_CALENDAR"}:
+        return "RED"
+    if kind == "MISSING_OFFICIAL":
+        return "RED" if calendar and calendar.date >= date.today() else "YELLOW"
+    if kind == "NEW_OFFICIAL":
+        return "RED" if official and official.date >= date.today() else "YELLOW"
+    return "YELLOW"
+
+def find_calendar_duplicates(calendar: list[Match]):
+    """Find multiple calendar rows representing the same team/opponent/date."""
+    groups = {}
+    for m in calendar:
+        key = (
+            m.gender,
+            m.date,
+            frozenset((norm_team(m.home), norm_team(m.away))),
+        )
+        groups.setdefault(key, []).append(m)
+
+    findings = []
+    for matches in groups.values():
+        if len(matches) > 1:
+            # One finding represents the duplicate set.
+            first = matches[0]
+            findings.append(_finding(
+                "DUPLICATE_CALENDAR",
+                first.source_team or norm_team(first.home),
+                first,
+                None,
+                f"Duplicate calendar entries found ({len(matches)} rows)",
+            ))
+    return findings
+
+
+def dedupe(findings):
+    """Collapse team-side duplicates into one match-level finding."""
+    result = {}
+    for f in findings:
+        c, o = f["calendar"], f["official"]
+        if c:
+            key = ("calendar", c.gender, c.date, frozenset((c.home, c.away)), f["kind"])
+        elif o:
+            key = ("official", o.gender, o.date, frozenset((o.home, o.away)), f["kind"])
+        else:
+            key = ("unknown", f["team"], f["kind"], f["detail"])
+        result[key] = f
+    return list(result.values())
