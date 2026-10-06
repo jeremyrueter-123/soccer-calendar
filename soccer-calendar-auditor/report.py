@@ -74,6 +74,8 @@ def write_report(findings, source_issues, path):
         "## Notes",
         "",
         "- Findings are deduplicated at the match level.",
+        "- Historical unmatched games are review items; upcoming unmatched games are action items.",
+        "- Duplicate calendar entries are reported separately as action items.",
         "- A failed fetch/parser is never treated as evidence that a game disappeared.",
         "- The auditor recommends changes; it does not make them.",
     ]

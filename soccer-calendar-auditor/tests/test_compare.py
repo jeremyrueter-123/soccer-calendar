@@ -74,3 +74,24 @@ def test_upcoming_home_away_change_is_still_detected():
     o = Match(date(2026, 10, 24), "12:00", "Ursinus", "Washington College", "Scheduled", "Men")
     findings = compare_team([c], [o], "Washington College", "Men", as_of=date(2026, 10, 6))
     assert any(f["kind"] == "HOME_AWAY" for f in findings)
+
+
+def test_historical_missing_calendar_game_is_review():
+    from compare import severity
+    c = Match(date(2026, 9, 1), "18:00", "Team A", "Team B", "Scheduled", "Men")
+    assert severity("MISSING_OFFICIAL", c, None) == "YELLOW"
+
+
+def test_upcoming_missing_calendar_game_is_actionable():
+    from compare import severity
+    c = Match(date(2026, 10, 24), "18:00", "Team A", "Team B", "Scheduled", "Men")
+    assert severity("MISSING_OFFICIAL", c, None) == "RED"
+
+
+def test_duplicate_calendar_entries_are_detected():
+    from compare import find_calendar_duplicates
+    a = Match(date(2026, 10, 3), "16:00", "Notre Dame (MD)", "Valley Forge", "Scheduled", "Men")
+    b = Match(date(2026, 10, 3), None, "Notre Dame (MD)", "Valley Forge", "Scheduled", "Men")
+    findings = find_calendar_duplicates([a, b])
+    assert len(findings) == 1
+    assert findings[0]["kind"] == "DUPLICATE_CALENDAR"

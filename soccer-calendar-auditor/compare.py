@@ -129,11 +129,38 @@ def compare_team(
 
 
 def severity(kind: str, calendar: Match | None, official: Match | None) -> str:
-    if kind in {"DATE", "TIME", "HOME_AWAY", "STATUS", "MISSING_OFFICIAL"}:
+    if kind in {"DATE", "TIME", "HOME_AWAY", "STATUS", "DUPLICATE_CALENDAR"}:
         return "RED"
+    if kind == "MISSING_OFFICIAL":
+        return "RED" if calendar and calendar.date >= date.today() else "YELLOW"
     if kind == "NEW_OFFICIAL":
-        return "YELLOW"
+        return "RED" if official and official.date >= date.today() else "YELLOW"
     return "YELLOW"
+
+def find_calendar_duplicates(calendar: list[Match]):
+    """Find multiple calendar rows representing the same team/opponent/date."""
+    groups = {}
+    for m in calendar:
+        key = (
+            m.gender,
+            m.date,
+            frozenset((norm_team(m.home), norm_team(m.away))),
+        )
+        groups.setdefault(key, []).append(m)
+
+    findings = []
+    for matches in groups.values():
+        if len(matches) > 1:
+            # One finding represents the duplicate set.
+            first = matches[0]
+            findings.append(_finding(
+                "DUPLICATE_CALENDAR",
+                first.source_team or norm_team(first.home),
+                first,
+                None,
+                f"Duplicate calendar entries found ({len(matches)} rows)",
+            ))
+    return findings
 
 
 def dedupe(findings):

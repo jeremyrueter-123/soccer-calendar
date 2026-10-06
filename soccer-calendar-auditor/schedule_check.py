@@ -6,7 +6,7 @@ import argparse
 from pathlib import Path
 
 from calendar_loader import load_calendar
-from compare import compare_team, dedupe
+from compare import compare_team, dedupe, find_calendar_duplicates
 from config import CALENDAR_CSV_URL, SOURCES
 from parser import parse_source
 from report import write_report
@@ -22,7 +22,7 @@ def main():
     calendar = load_calendar(args.calendar)
     print(f"Loaded {len(calendar)} included calendar matches.")
 
-    findings = []
+    findings = find_calendar_duplicates(calendar)
     source_issues = []
     verified = []
 
